@@ -29,6 +29,20 @@
             animation: fadeIn 1.5s ease-in;
         }
 
+        .image-container {
+            margin-top: 3rem;
+            animation: fadeIn 2s ease-in;
+        }
+
+        .example-image {
+            max-width: 600px;
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -44,6 +58,11 @@
 <body>
     <div class="container">
         <h1>Hello</h1>
+        <div class="image-container">
+            <img src="https://via.placeholder.com/600x400/667eea/ffffff?text=Example+Image+1"
+                 alt="Example 1"
+                 class="example-image">
+        </div>
     </div>
 </body>
 </html>
