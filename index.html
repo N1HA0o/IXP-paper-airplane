@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>纸飞机的旅程</title>
+    <title>Paper Airplane Journey</title>
     <style>
         * {
             margin: 0;
@@ -16,7 +16,7 @@
             height: 100vh;
             overflow: hidden;
             background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
-            font-family: sans-serif;
+            font-family: 'Arial', sans-serif;
         }
 
         .scene {
@@ -40,7 +40,7 @@
                 translateY(-50%)
                 translateZ(-1200px)
                 rotateX(65deg);
-            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .ground {
@@ -58,7 +58,7 @@
             position: relative;
         }
 
-        /* 纸张容器 */
+        /* Paper container */
         .paper-container {
             position: absolute;
             width: 300px;
@@ -74,7 +74,7 @@
             transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 基础纸张 */
+        /* Base paper */
         .base-paper {
             position: absolute;
             width: 100%;
@@ -86,7 +86,7 @@
             transition: opacity 0.5s ease-out;
         }
 
-        /* 纸飞机3D模型 */
+        /* Airplane 3D model */
         .airplane {
             position: absolute;
             width: 100%;
@@ -100,7 +100,7 @@
             opacity: 1;
         }
 
-        /* 左半部分 */
+        /* Left side */
         .left-side {
             position: absolute;
             width: 50%;
@@ -112,7 +112,7 @@
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 右半部分 */
+        /* Right side */
         .right-side {
             position: absolute;
             width: 50%;
@@ -124,7 +124,7 @@
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 左上三角折叠 */
+        /* Left triangle fold */
         .left-triangle {
             position: absolute;
             width: 100%;
@@ -139,7 +139,7 @@
             box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* 右上三角折叠 */
+        /* Right triangle fold */
         .right-triangle {
             position: absolute;
             width: 100%;
@@ -154,7 +154,7 @@
             box-shadow: -2px 2px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* 左机身 */
+        /* Left body */
         .left-body {
             position: absolute;
             width: 100%;
@@ -164,7 +164,7 @@
             box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* 右机身 */
+        /* Right body */
         .right-body {
             position: absolute;
             width: 100%;
@@ -174,7 +174,7 @@
             box-shadow: -2px 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* 中央机身 */
+        /* Center body */
         .center-body {
             position: absolute;
             width: 35px;
@@ -188,7 +188,7 @@
             transition: opacity 0.5s ease-out;
         }
 
-        /* 选择按钮 - 左侧 */
+        /* Choice button - Left */
         .choice-left {
             position: fixed;
             left: 80px;
@@ -213,7 +213,7 @@
             transform: translateY(-50%) translateX(-10px);
         }
 
-        /* 选择按钮 - 右侧 */
+        /* Choice button - Right */
         .choice-right {
             position: fixed;
             right: 80px;
@@ -238,7 +238,7 @@
             transform: translateY(-50%) translateX(10px);
         }
 
-        /* 箭头 */
+        /* Arrow */
         .arrow {
             width: 60px;
             height: 60px;
@@ -263,7 +263,7 @@
             50% { transform: translateX(8px); }
         }
 
-        /* 选项文字 */
+        /* Choice text */
         .choice-text {
             color: white;
             font-size: 22px;
@@ -277,21 +277,20 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* 白鸽群 */
+        /* Pigeons */
         .pigeons {
             position: absolute;
-            left: 10%;
+            left: 45%;
             top: 30%;
             transform-style: preserve-3d;
             opacity: 0;
-            transform: scale(0.3) translateZ(-500px);
-            transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: scale(0.2) translateZ(-2000px);
+            transition: all 6s cubic-bezier(0.2, 0, 0.3, 1);
         }
 
         .pigeons.visible {
             opacity: 1;
-            transform: scale(1.2) translateZ(100px);
-            left: 45%;
+            transform: scale(1.5) translateZ(200px);
         }
 
         .pigeon {
@@ -343,7 +342,7 @@
             50% { transform: rotateZ(30deg); }
         }
 
-        /* 热气球 - 精细3D模型 */
+        /* Hot air balloon - Fine 3D model */
         .hot-air-balloon {
             position: absolute;
             right: 40%;
@@ -358,7 +357,7 @@
             bottom: 30%;
         }
 
-        /* 热气球球体 */
+        /* Balloon sphere */
         .balloon-sphere {
             position: relative;
             width: 200px;
@@ -372,7 +371,7 @@
             50% { transform: translateY(-25px) rotateY(5deg); }
         }
 
-        /* 球体层 - 创建3D立体感 */
+        /* Sphere layers - Create 3D effect */
         .balloon-layer {
             position: absolute;
             width: 100%;
@@ -383,9 +382,11 @@
 
         .balloon-layer-1 {
             background: linear-gradient(135deg,
-                #ff6b6b 0%, #ff8787 20%,
-                #ffd93d 40%, #6bcf7f 60%,
-                #4d96ff 80%, #6b5fff 100%);
+                #dc143c 0%,
+                #ff4757 25%,
+                #ff6b6b 50%,
+                #ee5a6f 75%,
+                #c91f37 100%);
             transform: translateZ(30px);
             box-shadow:
                 inset -10px -20px 30px rgba(0, 0, 0, 0.2),
@@ -401,7 +402,7 @@
             transform: translateZ(35px);
         }
 
-        /* 球体纹理条 */
+        /* Sphere texture stripes */
         .balloon-stripe {
             position: absolute;
             width: 100%;
@@ -416,7 +417,7 @@
         .balloon-stripe:nth-child(2) { top: 40%; }
         .balloon-stripe:nth-child(3) { top: 60%; }
 
-        /* 绳索连接 */
+        /* Rope connections */
         .balloon-ropes {
             position: absolute;
             width: 100%;
@@ -453,7 +454,7 @@
             transform: rotateZ(3deg);
         }
 
-        /* 篮子 */
+        /* Basket */
         .balloon-basket {
             position: absolute;
             width: 80px;
@@ -474,7 +475,7 @@
             transform-style: preserve-3d;
         }
 
-        /* 篮子编织纹理 */
+        /* Basket weave texture */
         .basket-weave {
             position: absolute;
             width: 100%;
@@ -488,7 +489,7 @@
         .basket-weave:nth-child(3) { top: 60%; }
         .basket-weave:nth-child(4) { top: 80%; }
 
-        /* 篮子边缘 */
+        /* Basket rim */
         .basket-rim {
             position: absolute;
             width: 100%;
@@ -499,7 +500,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
-        /* 提示文字 */
+        /* Hint text */
         .hint {
             position: fixed;
             bottom: 60px;
@@ -520,7 +521,7 @@
             backdrop-filter: blur(8px);
         }
 
-        /* 场景描述 */
+        /* Scene description */
         .scene-description {
             position: fixed;
             top: 50%;
@@ -549,25 +550,25 @@
     </style>
 </head>
 <body>
-    <div class="hint" id="hint">点击白纸，开始纸飞机的旅程</div>
+    <div class="hint" id="hint">Click the paper to begin the journey</div>
     <div class="scene-description" id="sceneDesc"></div>
 
-    <!-- 左侧选项 -->
+    <!-- Left choice -->
     <div class="choice-left" id="choiceLeft">
         <div class="arrow">←</div>
-        <div class="choice-text">向左飞</div>
+        <div class="choice-text">Fly Left</div>
     </div>
 
-    <!-- 右侧选项 -->
+    <!-- Right choice -->
     <div class="choice-right" id="choiceRight">
         <div class="arrow">→</div>
-        <div class="choice-text">向右飞</div>
+        <div class="choice-text">Fly Right</div>
     </div>
 
     <div class="scene" id="scene">
         <div class="world" id="world">
             <div class="ground">
-                <!-- 纸张和纸飞机 -->
+                <!-- Paper and airplane -->
                 <div class="paper-container" id="paperContainer">
                     <div class="base-paper" id="basePaper"></div>
 
@@ -586,10 +587,10 @@
                     </div>
                 </div>
 
-                <!-- 白鸽群 -->
+                <!-- Pigeons -->
                 <div class="pigeons" id="pigeons"></div>
 
-                <!-- 热气球 -->
+                <!-- Hot air balloon -->
                 <div class="hot-air-balloon" id="balloon">
                     <div class="balloon-sphere">
                         <div class="balloon-layer balloon-layer-1">
@@ -638,7 +639,7 @@
             sceneDesc: document.getElementById('sceneDesc')
         };
 
-        // 创建白鸽群
+        // Create pigeons
         function createPigeons() {
             const positions = [
                 { x: 0, y: 0, delay: 0 },
@@ -661,7 +662,7 @@
             });
         }
 
-        // 3D折叠动画序列
+        // 3D folding animation sequence
         function foldPaper() {
             if (gameState !== 'initial') return;
             gameState = 'folding';
@@ -669,38 +670,38 @@
             el.hint.style.opacity = '0';
             el.container.style.cursor = 'default';
 
-            // 显示纸飞机模型
+            // Show airplane model
             setTimeout(() => {
                 el.basePaper.style.opacity = '0';
                 el.airplane.style.opacity = '1';
             }, 300);
 
-            // 步骤1: 左右上角向中线折叠 (0.8s)
+            // Step 1: Fold top corners to center line (0.8s)
             setTimeout(() => {
                 el.leftTriangle.style.transform = 'rotateX(180deg)';
                 el.rightTriangle.style.transform = 'rotateX(180deg)';
             }, 500);
 
-            // 步骤2: 左右二次向中线折叠 (1.6s)
+            // Step 2: Second fold to center line (1.6s)
             setTimeout(() => {
                 el.leftSide.style.transform = 'rotateY(20deg)';
                 el.rightSide.style.transform = 'rotateY(-20deg)';
             }, 1300);
 
-            // 步骤3: 沿中线对折 (2.4s)
+            // Step 3: Fold along center line (2.4s)
             setTimeout(() => {
                 el.leftSide.style.transform = 'rotateY(85deg)';
                 el.rightSide.style.transform = 'rotateY(-85deg)';
                 el.centerBody.style.opacity = '1';
             }, 2100);
 
-            // 步骤4: 展开机翼 (3.2s)
+            // Step 4: Open wings (3.2s)
             setTimeout(() => {
                 el.leftSide.style.transform = 'rotateY(70deg)';
                 el.rightSide.style.transform = 'rotateY(-70deg)';
             }, 2900);
 
-            // 视角拉近
+            // Zoom in camera
             setTimeout(() => {
                 el.scene.style.perspective = '700px';
                 el.world.style.transform = `
@@ -711,17 +712,17 @@
                 `;
             }, 1500);
 
-            // 完成折叠，显示选项
+            // Complete folding, show choices
             setTimeout(() => {
                 gameState = 'folded';
-                el.hint.textContent = '选择纸飞机的飞行方向';
+                el.hint.textContent = 'Choose your flight direction';
                 el.hint.style.opacity = '0.9';
                 el.choiceLeft.classList.add('visible');
                 el.choiceRight.classList.add('visible');
             }, 3800);
         }
 
-        // 向左飞 - 遇见白鸽
+        // Fly left - Meet pigeons
         function flyLeft() {
             if (gameState !== 'folded') return;
             gameState = 'flying';
@@ -730,48 +731,41 @@
             el.choiceRight.classList.remove('visible');
             el.hint.style.opacity = '0';
 
-            // 纸飞机转向左侧
+            // Airplane turns left - stay in screen center
             el.container.style.transform = `
                 translateX(-50%)
                 translateY(-50%)
-                rotateX(-55deg)
-                rotateY(-35deg)
-                rotateZ(-20deg)
+                rotateX(-50deg)
+                rotateY(-90deg)
+                rotateZ(0deg)
+                scale(1)
             `;
 
-            // 镜头跟随纸飞机向左
+            // Camera follows and rotates to see left side
             setTimeout(() => {
+                el.scene.style.perspective = '800px';
                 el.world.style.transform = `
-                    translateX(-20%)
+                    translateX(-50%)
                     translateY(-50%)
-                    translateZ(-300px)
+                    translateZ(-400px)
                     rotateX(50deg)
-                    rotateY(25deg)
+                    rotateY(-15deg)
                 `;
+            }, 500);
 
-                el.container.style.transform = `
-                    translateX(-100%)
-                    translateY(-60%)
-                    rotateX(-50deg)
-                    rotateY(-40deg)
-                    rotateZ(-25deg)
-                    scale(0.85)
-                `;
-            }, 800);
-
-            // 白鸽从远处靠近
+            // Pigeons approach from distance with perspective
             setTimeout(() => {
                 el.pigeons.classList.add('visible');
-                el.sceneDesc.textContent = '一群白鸽从远处飞来，与纸飞机一起翱翔在天空';
+                el.sceneDesc.textContent = 'A flock of pigeons approaches from afar';
                 el.sceneDesc.classList.add('visible');
-            }, 2000);
+            }, 1500);
 
             setTimeout(() => {
                 el.sceneDesc.style.opacity = '0';
-            }, 6500);
+            }, 7000);
         }
 
-        // 向右飞 - 遇见热气球
+        // Fly right - Meet hot air balloon
         function flyRight() {
             if (gameState !== 'folded') return;
             gameState = 'flying';
@@ -780,53 +774,46 @@
             el.choiceRight.classList.remove('visible');
             el.hint.style.opacity = '0';
 
-            // 纸飞机转向右侧并俯冲
+            // Airplane turns right - stay in screen center
             el.container.style.transform = `
                 translateX(-50%)
-                translateY(-30%)
-                rotateX(-70deg)
-                rotateY(35deg)
-                rotateZ(20deg)
+                translateY(-50%)
+                rotateX(-50deg)
+                rotateY(90deg)
+                rotateZ(0deg)
+                scale(1)
             `;
 
-            // 镜头跟随纸飞机向右下
+            // Camera follows and rotates to see right side
             setTimeout(() => {
+                el.scene.style.perspective = '800px';
                 el.world.style.transform = `
-                    translateX(-75%)
-                    translateY(-35%)
-                    translateZ(-250px)
-                    rotateX(60deg)
-                    rotateY(-30deg)
+                    translateX(-50%)
+                    translateY(-50%)
+                    translateZ(-400px)
+                    rotateX(50deg)
+                    rotateY(15deg)
                 `;
+            }, 500);
 
-                el.container.style.transform = `
-                    translateX(20%)
-                    translateY(-20%)
-                    rotateX(-65deg)
-                    rotateY(40deg)
-                    rotateZ(25deg)
-                    scale(0.8)
-                `;
-            }, 800);
-
-            // 热气球从下方上升
+            // Hot air balloon rises from below
             setTimeout(() => {
                 el.balloon.classList.add('visible');
-                el.sceneDesc.textContent = '一个五彩缤纷的热气球从下方缓缓升起';
+                el.sceneDesc.textContent = 'A red hot air balloon rises from below';
                 el.sceneDesc.classList.add('visible');
-            }, 2000);
+            }, 1500);
 
             setTimeout(() => {
                 el.sceneDesc.style.opacity = '0';
-            }, 6500);
+            }, 7000);
         }
 
-        // 事件监听
+        // Event listeners
         el.container.addEventListener('click', foldPaper);
         el.choiceLeft.addEventListener('click', flyLeft);
         el.choiceRight.addEventListener('click', flyRight);
 
-        // 初始化
+        // Initialize
         createPigeons();
     </script>
 </body>
