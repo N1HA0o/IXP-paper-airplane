@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>对峙</title>
+    <title>对峙 - Confrontation</title>
     <style>
         * {
             margin: 0;
@@ -15,476 +15,506 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(to bottom, #1a1a1a 0%, #0d0d0d 100%);
+            background: #0a0a0a;
             font-family: monospace;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
         }
 
         .scene {
             width: 100%;
             height: 100%;
             position: relative;
-            perspective: 800px;
+            perspective: 1200px;
+            perspective-origin: 50% 30%;
         }
 
-        /* 桌子 */
-        .table-container {
+        /* 3D桌子 */
+        .table-3d {
             position: absolute;
-            bottom: 20%;
+            top: 35%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 600px;
+            transform: translateX(-50%) rotateX(77deg);
+            transform-style: preserve-3d;
+        }
+
+        .table-top {
+            width: 500px;
             height: 300px;
-        }
-
-        .table {
+            background: #1a5c3a;
+            border-radius: 150px / 150px;
             position: relative;
-            width: 100%;
-            height: 100%;
-            transform: rotateX(45deg);
-        }
-
-        .table-surface {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #1a4d2e;
-            border-radius: 150px / 75px;
             box-shadow:
-                inset 0 4px 8px rgba(0, 0, 0, 0.3),
-                0 2px 4px rgba(0, 0, 0, 0.5);
+                inset 0 0 30px rgba(0, 0, 0, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.8);
         }
 
-        /* 桌子边缘（3D效果但减弱） */
-        .table-edge {
+        .table-top::before {
+            content: '';
             position: absolute;
-            width: 100%;
-            height: 20px;
-            bottom: -20px;
-            background: #143d22;
-            border-radius: 150px / 10px;
-            opacity: 0.6;
+            inset: 10px;
+            background: #1e6b42;
+            border-radius: 140px / 140px;
+            box-shadow: inset 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
-        /* 对面的人物 */
-        .opposite-person {
+        .table-leg {
             position: absolute;
-            top: 15%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 280px;
-        }
-
-        /* 帽子 */
-        .hat {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 120px;
-            height: 40px;
-            background: #2b2b2b;
-            border-radius: 60px 60px 0 0;
-        }
-
-        .hat-brim {
-            position: absolute;
-            top: 35px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 160px;
-            height: 12px;
-            background: #1f1f1f;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        /* 头部（模糊的脸） */
-        .head {
-            position: absolute;
-            top: 47px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 120px;
-            background: #3d3d3d;
-            border-radius: 50px 50px 40px 40px;
-            box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        /* 血迹（脸上） */
-        .blood-face {
-            position: absolute;
-            width: 20px;
-            height: 30px;
-            background: #4a0f0f;
-            opacity: 0.7;
-        }
-
-        .blood-face:nth-child(1) {
-            top: 40%;
-            left: 30%;
-            width: 15px;
-            height: 40px;
-            border-radius: 3px;
-        }
-
-        .blood-face:nth-child(2) {
-            top: 50%;
-            right: 35%;
-            width: 12px;
-            height: 25px;
-            border-radius: 2px;
-        }
-
-        /* 身体（绿色卫衣） */
-        .hoodie {
-            position: absolute;
-            top: 167px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px;
-            height: 100px;
-            background: #2d5016;
-            border-radius: 0 0 20px 20px;
-            box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        /* 卫衣上的血迹 */
-        .blood-hoodie {
-            position: absolute;
-            background: #3d0f0f;
-            opacity: 0.8;
-        }
-
-        .blood-hoodie:nth-child(1) {
-            top: 20%;
-            left: 35%;
             width: 30px;
-            height: 35px;
-            border-radius: 50% 40% 50% 40%;
-        }
-
-        .blood-hoodie:nth-child(2) {
-            top: 50%;
-            right: 30%;
-            width: 25px;
-            height: 20px;
-            border-radius: 40% 50% 40% 50%;
-        }
-
-        .blood-hoodie:nth-child(3) {
-            bottom: 20%;
-            left: 45%;
-            width: 20px;
-            height: 25px;
-            border-radius: 50%;
-        }
-
-        /* 绑住的手 */
-        .tied-hands {
-            position: absolute;
-            top: 267px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 40px;
-        }
-
-        .rope {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: #4a3c28;
-            border-radius: 4px;
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
-        }
-
-        .tied-hand {
-            position: absolute;
-            top: 0;
-            width: 35px;
-            height: 40px;
-            background: #6b5d54;
-            border-radius: 8px;
-        }
-
-        .tied-hand.left {
-            left: 0;
-        }
-
-        .tied-hand.right {
-            right: 0;
-        }
-
-        /* 左轮手枪 */
-        .revolver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(-45deg);
-            width: 100px;
-            height: 50px;
-            z-index: 10;
-        }
-
-        .gun-barrel {
-            position: absolute;
-            top: 15px;
-            left: 0;
-            width: 50px;
-            height: 20px;
-            background: #1a1a1a;
-            border-radius: 2px;
-            box-shadow:
-                inset 0 2px 4px rgba(0, 0, 0, 0.8),
-                0 1px 2px rgba(255, 255, 255, 0.1);
-        }
-
-        .gun-cylinder {
-            position: absolute;
-            top: 10px;
-            left: 45px;
-            width: 30px;
-            height: 30px;
-            background: #2a2a2a;
-            border-radius: 50%;
-            box-shadow:
-                inset 0 2px 5px rgba(0, 0, 0, 0.6),
-                0 1px 3px rgba(255, 255, 255, 0.15);
-        }
-
-        .gun-grip {
-            position: absolute;
-            top: 25px;
-            left: 60px;
-            width: 25px;
-            height: 35px;
-            background: #1f1f1f;
-            border-radius: 0 0 8px 3px;
-            box-shadow:
-                inset -1px 1px 3px rgba(0, 0, 0, 0.7),
-                0 1px 2px rgba(255, 255, 255, 0.1);
-        }
-
-        .gun-trigger {
-            position: absolute;
-            top: 28px;
-            left: 58px;
-            width: 8px;
-            height: 12px;
-            background: #333;
-            border-radius: 2px;
-        }
-
-        /* 玩家的手（第一人称视角） */
-        .player-hands {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            pointer-events: none;
-        }
-
-        .player-arm {
-            position: absolute;
-            bottom: 0;
-            width: 200px;
-            height: 100%;
-        }
-
-        .player-arm.left {
-            left: 5%;
-        }
-
-        .player-arm.right {
-            right: 5%;
-        }
-
-        /* 手臂（渐变淡化） */
-        .arm {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 80%;
-            background: linear-gradient(to bottom,
-                rgba(139, 125, 107, 0) 0%,
-                rgba(139, 125, 107, 0.3) 30%,
-                rgba(139, 125, 107, 0.6) 60%,
-                rgba(139, 125, 107, 1) 100%
-            );
-        }
-
-        /* 手 */
-        .hand {
-            position: absolute;
-            bottom: 15%;
-            width: 80px;
             height: 100px;
-            background: #8b7d6b;
-            border-radius: 40px 40px 20px 20px;
+            background: linear-gradient(to bottom, #0d3320, #082216);
+            transform-style: preserve-3d;
+            transform: translateZ(-100px);
+            box-shadow: -5px 0 10px rgba(0, 0, 0, 0.5);
         }
 
-        .player-arm.left .hand {
-            left: 30%;
-            transform: rotate(-5deg);
+        .table-leg.front-left {
+            bottom: -100px;
+            left: 100px;
         }
 
-        .player-arm.right .hand {
-            right: 30%;
-            transform: rotate(5deg);
+        .table-leg.front-right {
+            bottom: -100px;
+            right: 100px;
         }
 
-        /* 手指 */
-        .finger {
+        /* 像素画容器 */
+        .pixel-canvas {
             position: absolute;
-            bottom: 0;
-            width: 15px;
-            height: 30px;
-            background: #7a6d5f;
-            border-radius: 8px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
         }
 
-        .finger:nth-child(1) { left: 5px; height: 25px; }
-        .finger:nth-child(2) { left: 22px; height: 32px; }
-        .finger:nth-child(3) { left: 39px; height: 30px; }
-        .finger:nth-child(4) { right: 5px; height: 25px; }
-
-        /* 铁链 */
-        .chain {
-            position: absolute;
-            bottom: 20%;
-            width: 100%;
-            height: 15px;
-        }
-
-        .chain-link {
-            position: absolute;
-            width: 20px;
-            height: 15px;
-            background: #4a4a4a;
-            border: 2px solid #2a2a2a;
-            border-radius: 3px;
-            box-shadow:
-                inset 0 1px 2px rgba(255, 255, 255, 0.2),
-                0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .player-arm.left .chain-link {
-            left: 30%;
-        }
-
-        .player-arm.right .chain-link {
-            right: 30%;
-        }
-
-        .chain-link:nth-child(1) { transform: translateX(-25px); }
-        .chain-link:nth-child(2) { transform: translateX(0px); }
-        .chain-link:nth-child(3) { transform: translateX(25px); opacity: 0.7; }
-        .chain-link:nth-child(4) { transform: translateX(50px); opacity: 0.4; }
-
-        /* 环境光效 */
-        .ambient-light {
-            position: absolute;
-            top: 0;
+        /* 对面人物像素画 */
+        .opposite-character {
+            top: 5%;
             left: 50%;
             transform: translateX(-50%);
-            width: 400px;
+            width: 320px;
             height: 400px;
-            background: radial-gradient(circle, rgba(100, 100, 100, 0.1) 0%, transparent 70%);
+        }
+
+        /* 玩家手部 */
+        .player-hands-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60%;
             pointer-events: none;
+        }
+
+        .player-hand {
+            position: absolute;
+            bottom: 0;
+        }
+
+        .player-hand.left {
+            left: 8%;
+        }
+
+        .player-hand.right {
+            right: 8%;
         }
     </style>
 </head>
 <body>
     <div class="scene">
-        <!-- 环境光 -->
-        <div class="ambient-light"></div>
+        <!-- 对面人物像素画 -->
+        <canvas id="oppositeChar" class="pixel-canvas opposite-character" width="160" height="200"></canvas>
 
-        <!-- 对面的人 -->
-        <div class="opposite-person">
-            <!-- 帽子 -->
-            <div class="hat"></div>
-            <div class="hat-brim"></div>
-
-            <!-- 头部 -->
-            <div class="head">
-                <div class="blood-face"></div>
-                <div class="blood-face"></div>
+        <!-- 3D桌子 -->
+        <div class="table-3d">
+            <div class="table-top">
+                <!-- 左轮手枪像素画 -->
+                <canvas id="revolverCanvas" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(-77deg); image-rendering: pixelated;" width="80" height="40"></canvas>
             </div>
-
-            <!-- 卫衣 -->
-            <div class="hoodie">
-                <div class="blood-hoodie"></div>
-                <div class="blood-hoodie"></div>
-                <div class="blood-hoodie"></div>
-            </div>
-
-            <!-- 绑住的手 -->
-            <div class="tied-hands">
-                <div class="rope"></div>
-                <div class="tied-hand left"></div>
-                <div class="tied-hand right"></div>
-            </div>
+            <div class="table-leg front-left"></div>
+            <div class="table-leg front-right"></div>
         </div>
 
-        <!-- 桌子 -->
-        <div class="table-container">
-            <div class="table">
-                <div class="table-surface"></div>
-                <div class="table-edge"></div>
-
-                <!-- 左轮手枪 -->
-                <div class="revolver">
-                    <div class="gun-barrel"></div>
-                    <div class="gun-cylinder"></div>
-                    <div class="gun-trigger"></div>
-                    <div class="gun-grip"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 玩家的手 -->
-        <div class="player-hands">
-            <!-- 左手 -->
-            <div class="player-arm left">
-                <div class="arm"></div>
-                <div class="hand">
-                    <div class="finger"></div>
-                    <div class="finger"></div>
-                    <div class="finger"></div>
-                    <div class="finger"></div>
-                </div>
-                <div class="chain">
-                    <div class="chain-link"></div>
-                    <div class="chain-link"></div>
-                    <div class="chain-link"></div>
-                    <div class="chain-link"></div>
-                </div>
-            </div>
-
-            <!-- 右手 -->
-            <div class="player-arm right">
-                <div class="arm"></div>
-                <div class="hand">
-                    <div class="finger"></div>
-                    <div class="finger"></div>
-                    <div class="finger"></div>
-                    <div class="finger"></div>
-                </div>
-                <div class="chain">
-                    <div class="chain-link"></div>
-                    <div class="chain-link"></div>
-                    <div class="chain-link"></div>
-                    <div class="chain-link"></div>
-                </div>
-            </div>
+        <!-- 玩家手部 -->
+        <div class="player-hands-container">
+            <canvas id="leftHand" class="pixel-canvas player-hand left" width="200" height="400"></canvas>
+            <canvas id="rightHand" class="pixel-canvas player-hand right" width="200" height="400"></canvas>
         </div>
     </div>
+
+    <script>
+        // 像素尺寸
+        const PIXEL_SIZE = 2;
+
+        // 绘制像素
+        function drawPixel(ctx, x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+        }
+
+        // 绘制矩形区域
+        function drawRect(ctx, x, y, w, h, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, w, h);
+        }
+
+        // ===== 绘制对面人物 =====
+        function drawOppositeCharacter() {
+            const canvas = document.getElementById('oppositeChar');
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            // 清空画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 帽子 (深灰色/黑色)
+            drawRect(ctx, 55, 20, 50, 8, '#1a1a1a'); // 帽顶
+            drawRect(ctx, 50, 28, 60, 6, '#2a2a2a'); // 帽檐
+
+            // 帽子细节
+            drawRect(ctx, 60, 22, 40, 4, '#252525');
+
+            // 头部轮廓 (被帽子遮住大半)
+            drawRect(ctx, 62, 34, 36, 45, '#3d3a38'); // 脸部基色
+
+            // 脸部阴影 (帽子投影)
+            drawRect(ctx, 62, 34, 36, 15, '#2a2826');
+
+            // 隐约可见的面部特征
+            drawRect(ctx, 70, 45, 4, 2, '#252220'); // 左眼位置（模糊）
+            drawRect(ctx, 86, 45, 4, 2, '#252220'); // 右眼位置（模糊）
+
+            // 血迹在脸上 (暗红色，自然流淌形状)
+            drawRect(ctx, 75, 50, 2, 8, '#4a1515');
+            drawRect(ctx, 76, 52, 2, 10, '#3d1010');
+            drawRect(ctx, 77, 54, 1, 8, '#2d0808');
+            drawRect(ctx, 74, 56, 2, 6, '#4a1515');
+
+            // 脸部右侧血迹
+            drawRect(ctx, 88, 48, 3, 6, '#3d1010');
+            drawRect(ctx, 89, 50, 2, 8, '#4a1515');
+
+            // 颈部
+            drawRect(ctx, 70, 79, 20, 8, '#3d3a38');
+
+            // 绿色卫衣主体
+            drawRect(ctx, 50, 87, 60, 80, '#2d5016');
+
+            // 卫衣阴影和褶皱
+            drawRect(ctx, 50, 87, 60, 8, '#243d12'); // 顶部阴影
+            drawRect(ctx, 50, 87, 8, 80, '#243d12'); // 左侧阴影
+            drawRect(ctx, 102, 87, 8, 80, '#1f3310'); // 右侧阴影
+
+            // 卫衣中间高光
+            drawRect(ctx, 75, 95, 10, 60, '#35611c');
+
+            // 帽子兜的轮廓
+            drawRect(ctx, 58, 88, 44, 3, '#243d12');
+
+            // 卫衣上的血迹 (自然的流淌和溅射效果)
+            // 左胸血迹
+            drawRect(ctx, 60, 100, 8, 12, '#5a1a1a');
+            drawRect(ctx, 62, 102, 6, 14, '#4a1010');
+            drawRect(ctx, 63, 104, 5, 12, '#3d0d0d');
+            drawRect(ctx, 61, 108, 4, 8, '#5a1a1a');
+            drawRect(ctx, 59, 112, 3, 6, '#3d0d0d');
+
+            // 血迹向下流淌
+            drawRect(ctx, 64, 116, 2, 10, '#3d0d0d');
+            drawRect(ctx, 65, 120, 1, 12, '#2d0808');
+
+            // 右侧血迹（溅射效果）
+            drawRect(ctx, 85, 95, 6, 6, '#4a1010');
+            drawRect(ctx, 87, 97, 8, 4, '#5a1a1a');
+            drawRect(ctx, 90, 98, 4, 3, '#3d0d0d');
+            drawRect(ctx, 92, 94, 3, 3, '#4a1010');
+
+            // 中下部血迹
+            drawRect(ctx, 72, 130, 10, 8, '#5a1a1a');
+            drawRect(ctx, 73, 132, 8, 10, '#4a1010');
+            drawRect(ctx, 74, 134, 6, 8, '#3d0d0d');
+            drawRect(ctx, 70, 138, 4, 6, '#4a1010');
+
+            // 小血滴
+            drawRect(ctx, 68, 145, 2, 3, '#3d0d0d');
+            drawRect(ctx, 78, 142, 2, 2, '#4a1010');
+            drawRect(ctx, 85, 138, 3, 3, '#3d0d0d');
+
+            // 绳子（绑在后面，可以看到一些）
+            drawRect(ctx, 48, 110, 4, 30, '#4a3828');
+            drawRect(ctx, 108, 110, 4, 30, '#4a3828');
+
+            // 绳子细节
+            drawRect(ctx, 49, 112, 2, 26, '#5a4838');
+            drawRect(ctx, 109, 112, 2, 26, '#5a4838');
+        }
+
+        // ===== 绘制左轮手枪 =====
+        function drawRevolver() {
+            const canvas = document.getElementById('revolverCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            // 枪管
+            drawRect(ctx, 20, 16, 25, 8, '#0d0d0d');
+            drawRect(ctx, 21, 17, 23, 6, '#1a1a1a');
+
+            // 枪口
+            drawRect(ctx, 20, 18, 2, 4, '#000000');
+
+            // 弹仓
+            drawRect(ctx, 43, 13, 12, 14, '#1a1a1a');
+            drawRect(ctx, 44, 14, 10, 12, '#2a2a2a');
+
+            // 弹仓圆形细节
+            for(let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2;
+                const cx = 49 + Math.cos(angle) * 3;
+                const cy = 20 + Math.sin(angle) * 3;
+                drawPixel(ctx, Math.floor(cx), Math.floor(cy), '#1a1a1a');
+            }
+
+            // 扳机护圈
+            drawRect(ctx, 48, 24, 8, 2, '#2a2a2a');
+            drawRect(ctx, 48, 24, 2, 6, '#2a2a2a');
+            drawRect(ctx, 54, 24, 2, 6, '#2a2a2a');
+
+            // 扳机
+            drawRect(ctx, 50, 26, 3, 4, '#3a3a3a');
+
+            // 握把
+            drawRect(ctx, 52, 27, 10, 3, '#1a1a1a');
+            drawRect(ctx, 54, 30, 8, 3, '#1a1a1a');
+            drawRect(ctx, 55, 33, 6, 3, '#1a1a1a');
+            drawRect(ctx, 56, 36, 4, 2, '#1a1a1a');
+
+            // 握把纹理
+            drawRect(ctx, 55, 28, 6, 1, '#2a2a2a');
+            drawRect(ctx, 56, 31, 5, 1, '#2a2a2a');
+            drawRect(ctx, 57, 34, 3, 1, '#2a2a2a');
+
+            // 高光
+            drawRect(ctx, 22, 18, 8, 1, '#3a3a3a');
+            drawRect(ctx, 45, 15, 4, 1, '#3a3a3a');
+        }
+
+        // ===== 绘制玩家左手 =====
+        function drawLeftHand() {
+            const canvas = document.getElementById('leftHand');
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 手臂（从上到下渐变淡化）
+            for(let y = 0; y < 250; y++) {
+                const alpha = Math.min(1, y / 150);
+                const r = 139, g = 125, b = 107;
+                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                ctx.fillRect(60, y, 35, 1);
+
+                // 手臂阴影
+                if(alpha > 0.3) {
+                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha})`;
+                    ctx.fillRect(60, y, 5, 1);
+                }
+            }
+
+            // 手腕
+            drawRect(ctx, 58, 250, 40, 25, '#8b7d6b');
+            drawRect(ctx, 60, 252, 36, 21, '#9a8a75');
+
+            // 手腕阴影
+            drawRect(ctx, 58, 250, 40, 4, '#7a6d5f');
+            drawRect(ctx, 58, 250, 6, 25, '#7a6d5f');
+
+            // 铁链在手腕上
+            // 链环
+            for(let i = 0; i < 3; i++) {
+                const x = 55 + i * 8;
+                const y = 258;
+                drawRect(ctx, x, y, 6, 10, '#3a3a3a');
+                drawRect(ctx, x+1, y+1, 4, 8, '#2a2a2a');
+                drawRect(ctx, x+1, y+2, 4, 1, '#4a4a4a'); // 高光
+            }
+
+            // 链子延伸
+            for(let i = 3; i < 8; i++) {
+                const x = 55 + i * 8;
+                const y = 258;
+                const alpha = 1 - (i - 3) / 5;
+                ctx.globalAlpha = alpha;
+                drawRect(ctx, x, y, 6, 10, '#3a3a3a');
+                drawRect(ctx, x+1, y+1, 4, 8, '#2a2a2a');
+                ctx.globalAlpha = 1;
+            }
+
+            // 手掌
+            drawRect(ctx, 55, 275, 45, 55, '#8b7d6b');
+            drawRect(ctx, 57, 277, 41, 51, '#9a8a75');
+
+            // 手掌阴影和细节
+            drawRect(ctx, 55, 275, 6, 55, '#7a6d5f');
+            drawRect(ctx, 55, 275, 45, 6, '#7a6d5f');
+
+            // 手掌纹路
+            drawRect(ctx, 65, 290, 25, 1, '#8a7a68');
+            drawRect(ctx, 68, 300, 20, 1, '#8a7a68');
+            drawRect(ctx, 70, 310, 18, 1, '#8a7a68');
+
+            // 拇指
+            drawRect(ctx, 45, 295, 15, 25, '#8b7d6b');
+            drawRect(ctx, 46, 296, 13, 23, '#9a8a75');
+            drawRect(ctx, 45, 295, 15, 4, '#7a6d5f');
+            drawRect(ctx, 45, 295, 3, 25, '#7a6d5f');
+
+            // 拇指关节
+            drawRect(ctx, 46, 307, 13, 2, '#8a7a68');
+
+            // 食指
+            drawRect(ctx, 55, 330, 12, 35, '#8b7d6b');
+            drawRect(ctx, 56, 331, 10, 33, '#9a8a75');
+            drawRect(ctx, 55, 330, 12, 4, '#7a6d5f');
+
+            // 食指关节
+            drawRect(ctx, 56, 345, 10, 2, '#8a7a68');
+            drawRect(ctx, 56, 355, 10, 2, '#8a7a68');
+
+            // 中指
+            drawRect(ctx, 68, 330, 12, 38, '#8b7d6b');
+            drawRect(ctx, 69, 331, 10, 36, '#9a8a75');
+            drawRect(ctx, 68, 330, 12, 4, '#7a6d5f');
+
+            // 中指关节
+            drawRect(ctx, 69, 346, 10, 2, '#8a7a68');
+            drawRect(ctx, 69, 357, 10, 2, '#8a7a68');
+
+            // 无名指
+            drawRect(ctx, 81, 330, 12, 35, '#8b7d6b');
+            drawRect(ctx, 82, 331, 10, 33, '#9a8a75');
+            drawRect(ctx, 81, 330, 12, 4, '#7a6d5f');
+
+            // 无名指关节
+            drawRect(ctx, 82, 345, 10, 2, '#8a7a68');
+            drawRect(ctx, 82, 355, 10, 2, '#8a7a68');
+
+            // 小指
+            drawRect(ctx, 94, 330, 10, 30, '#8b7d6b');
+            drawRect(ctx, 95, 331, 8, 28, '#9a8a75');
+            drawRect(ctx, 94, 330, 10, 4, '#7a6d5f');
+
+            // 小指关节
+            drawRect(ctx, 95, 343, 8, 2, '#8a7a68');
+            drawRect(ctx, 95, 351, 8, 2, '#8a7a68');
+        }
+
+        // ===== 绘制玩家右手 =====
+        function drawRightHand() {
+            const canvas = document.getElementById('rightHand');
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = false;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 手臂（从上到下渐变淡化）- 右手位置稍微不同
+            for(let y = 0; y < 250; y++) {
+                const alpha = Math.min(1, y / 150);
+                const r = 139, g = 125, b = 107;
+                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                ctx.fillRect(105, y, 35, 1);
+
+                // 手臂阴影
+                if(alpha > 0.3) {
+                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha})`;
+                    ctx.fillRect(134, y, 5, 1);
+                }
+            }
+
+            // 手腕
+            drawRect(ctx, 102, 250, 40, 25, '#8b7d6b');
+            drawRect(ctx, 104, 252, 36, 21, '#9a8a75');
+
+            // 手腕阴影
+            drawRect(ctx, 102, 250, 40, 4, '#7a6d5f');
+            drawRect(ctx, 136, 250, 6, 25, '#7a6d5f');
+
+            // 铁链在手腕上
+            for(let i = 0; i < 3; i++) {
+                const x = 107 + i * 8;
+                const y = 258;
+                drawRect(ctx, x, y, 6, 10, '#3a3a3a');
+                drawRect(ctx, x+1, y+1, 4, 8, '#2a2a2a');
+                drawRect(ctx, x+1, y+2, 4, 1, '#4a4a4a');
+            }
+
+            // 链子延伸
+            for(let i = 3; i < 8; i++) {
+                const x = 107 + i * 8;
+                const y = 258;
+                const alpha = 1 - (i - 3) / 5;
+                ctx.globalAlpha = alpha;
+                drawRect(ctx, x, y, 6, 10, '#3a3a3a');
+                drawRect(ctx, x+1, y+1, 4, 8, '#2a2a2a');
+                ctx.globalAlpha = 1;
+            }
+
+            // 手掌
+            drawRect(ctx, 100, 275, 45, 55, '#8b7d6b');
+            drawRect(ctx, 102, 277, 41, 51, '#9a8a75');
+
+            // 手掌阴影
+            drawRect(ctx, 139, 275, 6, 55, '#7a6d5f');
+            drawRect(ctx, 100, 275, 45, 6, '#7a6d5f');
+
+            // 手掌纹路
+            drawRect(ctx, 110, 290, 25, 1, '#8a7a68');
+            drawRect(ctx, 112, 300, 20, 1, '#8a7a68');
+            drawRect(ctx, 112, 310, 18, 1, '#8a7a68');
+
+            // 拇指（右手所以在右侧）
+            drawRect(ctx, 140, 295, 15, 25, '#8b7d6b');
+            drawRect(ctx, 141, 296, 13, 23, '#9a8a75');
+            drawRect(ctx, 140, 295, 15, 4, '#7a6d5f');
+            drawRect(ctx, 152, 295, 3, 25, '#7a6d5f');
+            drawRect(ctx, 141, 307, 13, 2, '#8a7a68');
+
+            // 小指
+            drawRect(ctx, 96, 330, 10, 30, '#8b7d6b');
+            drawRect(ctx, 97, 331, 8, 28, '#9a8a75');
+            drawRect(ctx, 96, 330, 10, 4, '#7a6d5f');
+            drawRect(ctx, 97, 343, 8, 2, '#8a7a68');
+            drawRect(ctx, 97, 351, 8, 2, '#8a7a68');
+
+            // 无名指
+            drawRect(ctx, 107, 330, 12, 35, '#8b7d6b');
+            drawRect(ctx, 108, 331, 10, 33, '#9a8a75');
+            drawRect(ctx, 107, 330, 12, 4, '#7a6d5f');
+            drawRect(ctx, 108, 345, 10, 2, '#8a7a68');
+            drawRect(ctx, 108, 355, 10, 2, '#8a7a68');
+
+            // 中指
+            drawRect(ctx, 120, 330, 12, 38, '#8b7d6b');
+            drawRect(ctx, 121, 331, 10, 36, '#9a8a75');
+            drawRect(ctx, 120, 330, 12, 4, '#7a6d5f');
+            drawRect(ctx, 121, 346, 10, 2, '#8a7a68');
+            drawRect(ctx, 121, 357, 10, 2, '#8a7a68');
+
+            // 食指
+            drawRect(ctx, 133, 330, 12, 35, '#8b7d6b');
+            drawRect(ctx, 134, 331, 10, 33, '#9a8a75');
+            drawRect(ctx, 133, 330, 12, 4, '#7a6d5f');
+            drawRect(ctx, 134, 345, 10, 2, '#8a7a68');
+            drawRect(ctx, 134, 355, 10, 2, '#8a7a68');
+        }
+
+        // 初始化绘制所有元素
+        drawOppositeCharacter();
+        drawRevolver();
+        drawLeftHand();
+        drawRightHand();
+
+        // 缩放画布以获得像素化效果
+        document.querySelectorAll('.pixel-canvas').forEach(canvas => {
+            canvas.style.width = (canvas.width * PIXEL_SIZE) + 'px';
+            canvas.style.height = (canvas.height * PIXEL_SIZE) + 'px';
+        });
+    </script>
 </body>
 </html>
