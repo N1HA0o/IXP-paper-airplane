@@ -83,7 +83,7 @@
             box-shadow:
                 0 20px 50px rgba(0, 0, 0, 0.2),
                 0 8px 20px rgba(0, 0, 0, 0.15);
-            transition: opacity 0.5s ease-out;
+            transition: opacity 0.8s ease-out;
         }
 
         /* Airplane 3D model */
@@ -91,104 +91,54 @@
             position: absolute;
             width: 100%;
             height: 100%;
+            left: 0;
+            top: 0;
             transform-style: preserve-3d;
             opacity: 0;
-            transition: opacity 0.3s ease-out;
+            transition: opacity 0.8s ease-out;
         }
 
         .airplane.visible {
             opacity: 1;
         }
 
-        /* Left side */
-        .left-side {
+        /* Top triangle surface (viewed from above) */
+        .top-triangle {
             position: absolute;
-            width: 50%;
-            height: 100%;
-            left: 0;
-            top: 0;
-            transform-origin: right center;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Right side */
-        .right-side {
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            right: 0;
-            top: 0;
-            transform-origin: left center;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Left triangle fold */
-        .left-triangle {
-            position: absolute;
-            width: 100%;
-            height: 50%;
-            left: 0;
-            top: 0;
-            background: #ffffff;
-            transform-origin: bottom right;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            clip-path: polygon(0 0, 100% 0, 100% 100%);
-            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Right triangle fold */
-        .right-triangle {
-            position: absolute;
-            width: 100%;
-            height: 50%;
-            right: 0;
-            top: 0;
-            background: #ffffff;
-            transform-origin: bottom left;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            clip-path: polygon(0 0, 100% 0, 0 100%);
-            box-shadow: -2px 2px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Left body */
-        .left-body {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            transform-style: preserve-3d;
-            box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Right body */
-        .right-body {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            transform-style: preserve-3d;
-            box-shadow: -2px 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Center body */
-        .center-body {
-            position: absolute;
-            width: 35px;
-            height: 100%;
+            width: 0;
+            height: 0;
             left: 50%;
             top: 0;
             transform: translateX(-50%);
-            background: #ffffff;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-bottom: 400px solid #ffffff;
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.15));
         }
 
-        /* Choice button - Left */
+        /* Vertical center body (perpendicular to top triangle) */
+        .vertical-body {
+            position: absolute;
+            width: 30px;
+            height: 120px;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%) rotateX(90deg) translateZ(-60px);
+            background: linear-gradient(to bottom,
+                #ffffff 0%,
+                #f5f5f5 50%,
+                #ffffff 100%);
+            transform-style: preserve-3d;
+            box-shadow:
+                2px 0 8px rgba(0, 0, 0, 0.15),
+                -2px 0 8px rgba(0, 0, 0, 0.15),
+                0 5px 15px rgba(0, 0, 0, 0.2);
+            transform-origin: center top;
+        }
+
+        /* Choice buttons - Left */
         .choice-left {
             position: fixed;
             left: 80px;
@@ -213,7 +163,7 @@
             transform: translateY(-50%) translateX(-10px);
         }
 
-        /* Choice button - Right */
+        /* Choice buttons - Right */
         .choice-right {
             position: fixed;
             right: 80px;
@@ -342,7 +292,7 @@
             50% { transform: rotateZ(30deg); }
         }
 
-        /* Hot air balloon - Fine 3D model */
+        /* Hot air balloon */
         .hot-air-balloon {
             position: absolute;
             right: 40%;
@@ -371,7 +321,7 @@
             50% { transform: translateY(-25px) rotateY(5deg); }
         }
 
-        /* Sphere layers - Create 3D effect */
+        /* Sphere layers */
         .balloon-layer {
             position: absolute;
             width: 100%;
@@ -402,7 +352,7 @@
             transform: translateZ(35px);
         }
 
-        /* Sphere texture stripes */
+        /* Balloon stripes */
         .balloon-stripe {
             position: absolute;
             width: 100%;
@@ -417,7 +367,7 @@
         .balloon-stripe:nth-child(2) { top: 40%; }
         .balloon-stripe:nth-child(3) { top: 60%; }
 
-        /* Rope connections */
+        /* Ropes */
         .balloon-ropes {
             position: absolute;
             width: 100%;
@@ -475,7 +425,7 @@
             transform-style: preserve-3d;
         }
 
-        /* Basket weave texture */
+        /* Basket weave */
         .basket-weave {
             position: absolute;
             width: 100%;
@@ -573,17 +523,10 @@
                     <div class="base-paper" id="basePaper"></div>
 
                     <div class="airplane" id="airplane">
-                        <div class="left-side" id="leftSide">
-                            <div class="left-triangle" id="leftTriangle"></div>
-                            <div class="left-body"></div>
-                        </div>
-
-                        <div class="right-side" id="rightSide">
-                            <div class="right-triangle" id="rightTriangle"></div>
-                            <div class="right-body"></div>
-                        </div>
-
-                        <div class="center-body" id="centerBody"></div>
+                        <!-- Top triangle (viewed from above) -->
+                        <div class="top-triangle" id="topTriangle"></div>
+                        <!-- Vertical center body -->
+                        <div class="vertical-body" id="verticalBody"></div>
                     </div>
                 </div>
 
@@ -626,11 +569,8 @@
             container: document.getElementById('paperContainer'),
             basePaper: document.getElementById('basePaper'),
             airplane: document.getElementById('airplane'),
-            leftSide: document.getElementById('leftSide'),
-            rightSide: document.getElementById('rightSide'),
-            leftTriangle: document.getElementById('leftTriangle'),
-            rightTriangle: document.getElementById('rightTriangle'),
-            centerBody: document.getElementById('centerBody'),
+            topTriangle: document.getElementById('topTriangle'),
+            verticalBody: document.getElementById('verticalBody'),
             hint: document.getElementById('hint'),
             choiceLeft: document.getElementById('choiceLeft'),
             choiceRight: document.getElementById('choiceRight'),
@@ -662,7 +602,7 @@
             });
         }
 
-        // 3D folding animation sequence
+        // Simple folding animation - paper transforms into airplane
         function foldPaper() {
             if (gameState !== 'initial') return;
             gameState = 'folding';
@@ -670,36 +610,14 @@
             el.hint.style.opacity = '0';
             el.container.style.cursor = 'default';
 
-            // Show airplane model
+            // Fade out paper, fade in airplane
             setTimeout(() => {
                 el.basePaper.style.opacity = '0';
-                el.airplane.style.opacity = '1';
             }, 300);
 
-            // Step 1: Fold top corners to center line (0.8s)
             setTimeout(() => {
-                el.leftTriangle.style.transform = 'rotateX(180deg)';
-                el.rightTriangle.style.transform = 'rotateX(180deg)';
-            }, 500);
-
-            // Step 2: Second fold to center line (1.6s)
-            setTimeout(() => {
-                el.leftSide.style.transform = 'rotateY(20deg)';
-                el.rightSide.style.transform = 'rotateY(-20deg)';
-            }, 1300);
-
-            // Step 3: Fold along center line (2.4s)
-            setTimeout(() => {
-                el.leftSide.style.transform = 'rotateY(85deg)';
-                el.rightSide.style.transform = 'rotateY(-85deg)';
-                el.centerBody.style.opacity = '1';
-            }, 2100);
-
-            // Step 4: Open wings (3.2s)
-            setTimeout(() => {
-                el.leftSide.style.transform = 'rotateY(70deg)';
-                el.rightSide.style.transform = 'rotateY(-70deg)';
-            }, 2900);
+                el.airplane.style.opacity = '1';
+            }, 800);
 
             // Zoom in camera
             setTimeout(() => {
@@ -710,7 +628,7 @@
                     translateZ(-500px)
                     rotateX(55deg)
                 `;
-            }, 1500);
+            }, 1200);
 
             // Complete folding, show choices
             setTimeout(() => {
@@ -719,7 +637,7 @@
                 el.hint.style.opacity = '0.9';
                 el.choiceLeft.classList.add('visible');
                 el.choiceRight.classList.add('visible');
-            }, 3800);
+            }, 2500);
         }
 
         // Fly left - Meet pigeons
@@ -731,29 +649,28 @@
             el.choiceRight.classList.remove('visible');
             el.hint.style.opacity = '0';
 
-            // Airplane turns left - stay in screen center
+            // Airplane turns left - stay in screen center, show left profile
             el.container.style.transform = `
                 translateX(-50%)
                 translateY(-50%)
                 rotateX(-50deg)
                 rotateY(-90deg)
-                rotateZ(0deg)
-                scale(1)
+                scale(1.2)
             `;
 
-            // Camera follows and rotates to see left side
+            // Camera follows and rotates left
             setTimeout(() => {
-                el.scene.style.perspective = '800px';
+                el.scene.style.perspective = '900px';
                 el.world.style.transform = `
                     translateX(-50%)
                     translateY(-50%)
                     translateZ(-400px)
                     rotateX(50deg)
-                    rotateY(-15deg)
+                    rotateY(-20deg)
                 `;
             }, 500);
 
-            // Pigeons approach from distance with perspective
+            // Pigeons approach from distance
             setTimeout(() => {
                 el.pigeons.classList.add('visible');
                 el.sceneDesc.textContent = 'A flock of pigeons approaches from afar';
@@ -774,25 +691,24 @@
             el.choiceRight.classList.remove('visible');
             el.hint.style.opacity = '0';
 
-            // Airplane turns right - stay in screen center
+            // Airplane turns right - stay in screen center, show right profile
             el.container.style.transform = `
                 translateX(-50%)
                 translateY(-50%)
                 rotateX(-50deg)
                 rotateY(90deg)
-                rotateZ(0deg)
-                scale(1)
+                scale(1.2)
             `;
 
-            // Camera follows and rotates to see right side
+            // Camera follows and rotates right
             setTimeout(() => {
-                el.scene.style.perspective = '800px';
+                el.scene.style.perspective = '900px';
                 el.world.style.transform = `
                     translateX(-50%)
                     translateY(-50%)
                     translateZ(-400px)
                     rotateX(50deg)
-                    rotateY(15deg)
+                    rotateY(20deg)
                 `;
             }, 500);
 
