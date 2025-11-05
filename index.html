@@ -1,68 +1,349 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>蒲公英 - Dandelion</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            font-family: Arial, sans-serif;
         }
 
         .container {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        h1 {
-            font-size: 6rem;
-            color: white;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 1.5s ease-in;
-        }
-
-        .image-container {
-            margin-top: 3rem;
-            animation: fadeIn 2s ease-in;
-        }
-
-        .example-image {
-            max-width: 600px;
             width: 100%;
-            height: auto;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 2s ease-out;
+        }
+
+        .dandelion {
+            position: relative;
+            width: 600px;
+            height: 700px;
+            animation: sway 3s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        /* 茎 */
+        .stem {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 350px;
+            background: linear-gradient(to bottom, #2d5016, #4a7c2c);
+            border-radius: 4px;
+        }
+
+        /* 蒲公英头部容器 */
+        .dandelion-head {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 400px;
+        }
+
+        /* 中心球 */
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #8B7355, #6B5345);
+            border-radius: 50%;
+            z-index: 10;
+        }
+
+        /* 种子 */
+        .seed {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 120px;
+            transform-origin: bottom center;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .seed.flying {
+            animation: flyAway 3s ease-out forwards;
+        }
+
+        .seed.last-seed {
+            animation: flyAwayLast 4s ease-out forwards;
+        }
+
+        /* 种子茎 */
+        .seed-stem {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to top, rgba(139, 115, 85, 0.6), rgba(255, 255, 255, 0.3));
+        }
+
+        /* 种子伞 */
+        .seed-fluff {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+        }
+
+        .seed-fluff::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        /* 创建绒毛效果 */
+        .fluff-ray {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1px;
+            height: 15px;
+            background: linear-gradient(to top, rgba(255, 255, 255, 0.9), transparent);
+            transform-origin: bottom center;
+        }
+
+        /* 摆动动画 */
+        @keyframes sway {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(2deg);
+            }
+            75% {
+                transform: rotate(-2deg);
+            }
+        }
+
+        /* 种子飘走动画 */
+        @keyframes flyAway {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--fly-x), var(--fly-y)) rotate(var(--fly-rotate)) scale(0.5);
+            }
+        }
+
+        /* 最后一个种子的飘走动画（视角跟随）*/
+        @keyframes flyAwayLast {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(var(--fly-x), var(--fly-y)) rotate(var(--fly-rotate)) scale(1.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(calc(var(--fly-x) * 2), calc(var(--fly-y) * 2)) rotate(calc(var(--fly-rotate) * 2)) scale(2);
+            }
+        }
+
+        /* 容器跟随最后一个种子 */
+        .container.follow-seed {
+            animation: followLastSeed 4s ease-out forwards;
+        }
+
+        @keyframes followLastSeed {
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+            50% {
+                transform: scale(1.5) translate(var(--follow-x), var(--follow-y));
+            }
+            100% {
+                transform: scale(2) translate(calc(var(--follow-x) * 1.5), calc(var(--follow-y) * 1.5));
+            }
+        }
+
+        .instruction {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            text-align: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-in;
+            z-index: 1000;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateX(-50%) translateY(20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .instruction.hidden {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Hello</h1>
-        <div class="image-container">
-            <img src="https://cataas.com/cat?width=600&height=400"
-                 alt="Catty"
-                 class="example-image">
+    <div class="container" id="container">
+        <div class="dandelion" id="dandelion">
+            <div class="stem"></div>
+            <div class="dandelion-head" id="dandelionHead">
+                <div class="center"></div>
+            </div>
         </div>
     </div>
+
+    <div class="instruction" id="instruction">
+        点击蒲公英，让种子随风飘散 ✨
+    </div>
+
+    <script>
+        // 创建蒲公英种子
+        const dandelionHead = document.getElementById('dandelionHead');
+        const dandelion = document.getElementById('dandelion');
+        const container = document.getElementById('container');
+        const instruction = document.getElementById('instruction');
+        const numberOfSeeds = 60;
+        const seeds = [];
+
+        // 创建种子
+        for (let i = 0; i < numberOfSeeds; i++) {
+            const seed = document.createElement('div');
+            seed.className = 'seed';
+
+            // 计算种子位置（圆形排列）
+            const angle = (i / numberOfSeeds) * Math.PI * 2;
+            const radius = 80 + Math.random() * 80; // 随机半径
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+
+            seed.style.transform = `translate(${x}px, ${y}px) rotate(${angle * 180 / Math.PI - 90}deg)`;
+
+            // 创建种子茎
+            const stem = document.createElement('div');
+            stem.className = 'seed-stem';
+            seed.appendChild(stem);
+
+            // 创建种子伞
+            const fluff = document.createElement('div');
+            fluff.className = 'seed-fluff';
+
+            // 添加绒毛射线
+            for (let j = 0; j < 12; j++) {
+                const ray = document.createElement('div');
+                ray.className = 'fluff-ray';
+                ray.style.transform = `rotate(${j * 30}deg)`;
+                fluff.appendChild(ray);
+            }
+
+            seed.appendChild(fluff);
+            dandelionHead.appendChild(seed);
+            seeds.push(seed);
+        }
+
+        // 点击事件
+        let seedsRemaining = numberOfSeeds;
+        let clickCount = 0;
+
+        dandelion.addEventListener('click', (e) => {
+            if (seedsRemaining === 0) return;
+
+            // 隐藏提示文字
+            if (clickCount === 0) {
+                instruction.classList.add('hidden');
+            }
+            clickCount++;
+
+            // 每次点击移除5-8个种子
+            const seedsToRemove = Math.min(Math.floor(Math.random() * 4) + 5, seedsRemaining);
+
+            for (let i = 0; i < seedsToRemove; i++) {
+                setTimeout(() => {
+                    removeSeed();
+                }, i * 100);
+            }
+        });
+
+        function removeSeed() {
+            // 找到未飘走的种子
+            const remainingSeeds = seeds.filter(s => !s.classList.contains('flying'));
+            if (remainingSeeds.length === 0) return;
+
+            // 随机选择一个种子
+            const randomIndex = Math.floor(Math.random() * remainingSeeds.length);
+            const seed = remainingSeeds[randomIndex];
+
+            // 设置飘走动画参数
+            const flyX = (Math.random() - 0.5) * 800;
+            const flyY = -(Math.random() * 600 + 400);
+            const flyRotate = (Math.random() - 0.5) * 360;
+
+            seed.style.setProperty('--fly-x', `${flyX}px`);
+            seed.style.setProperty('--fly-y', `${flyY}px`);
+            seed.style.setProperty('--fly-rotate', `${flyRotate}deg`);
+
+            seedsRemaining--;
+
+            // 检查是否是最后一个种子
+            if (seedsRemaining === 0) {
+                seed.classList.add('last-seed');
+
+                // 设置容器跟随参数
+                container.style.setProperty('--follow-x', `${-flyX / 4}px`);
+                container.style.setProperty('--follow-y', `${-flyY / 4}px`);
+                container.classList.add('follow-seed');
+            } else {
+                seed.classList.add('flying');
+            }
+        }
+    </script>
 </body>
 </html>
