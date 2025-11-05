@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>对峙 - Confrontation</title>
+    <title>白纸</title>
     <style>
         * {
             margin: 0;
@@ -15,723 +15,72 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            background: #0a0a0a;
-            font-family: monospace;
+            background: #f5f5dc; /* 纯米色背景 */
+            font-family: sans-serif;
         }
 
         .scene {
             width: 100%;
             height: 100%;
             position: relative;
-            perspective: 1200px;
-            perspective-origin: 50% 45%;
+            perspective: 800px;
+            perspective-origin: 50% 50%;
         }
 
-        /* === 简化的3D桌子 === */
-        .table-3d {
+        /* 超大平面 - 有透视效果，越远越淡 */
+        .plane {
             position: absolute;
-            top: 48%;
+            width: 3000px;
+            height: 3000px;
             left: 50%;
+            top: 50%;
             transform-style: preserve-3d;
-            transform: translateX(-50%) translateZ(-250px) rotateX(75deg);
+            transform:
+                translateX(-50%)
+                translateY(-30%)
+                translateZ(-1000px)
+                rotateX(60deg);
         }
 
-        /* 桌面 - 粗糙绿色材质 */
-        .table-surface {
-            width: 900px;
-            height: 550px;
-            background:
-                repeating-linear-gradient(
-                    45deg,
-                    #1a5c3a 0px,
-                    #1a5c3a 2px,
-                    #1c5e3c 2px,
-                    #1c5e3c 4px
-                ),
-                repeating-linear-gradient(
-                    -45deg,
-                    #185838 0px,
-                    #185838 2px,
-                    #1a5a3a 2px,
-                    #1a5a3a 4px
-                ),
-                radial-gradient(ellipse at 50% 50%,
-                    #1e6b42 0%,
-                    #1a5c3a 40%,
-                    #16502e 100%
-                );
-            border-radius: 450px / 275px;
+        /* 平面表面 - 纯浅蓝色，带渐变淡化 */
+        .plane-surface {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to top,
+                rgba(173, 216, 230, 1) 0%,     /* 底部（近处）纯浅蓝色 */
+                rgba(173, 216, 230, 0.7) 30%,  /* 中间开始淡化 */
+                rgba(173, 216, 230, 0.4) 60%,  /* 继续淡化 */
+                rgba(173, 216, 230, 0.1) 100%  /* 顶部（远处）几乎透明 */
+            );
             position: relative;
-            box-shadow:
-                inset 0 0 80px rgba(0, 0, 0, 0.4),
-                inset 0 0 40px rgba(255, 255, 255, 0.05),
-                0 0 120px rgba(0, 0, 0, 0.9);
-            transform: translateZ(0);
         }
 
-        /* 粗糙纹理叠加 */
-        .table-surface::before {
-            content: '';
+        /* 白纸 */
+        .paper {
             position: absolute;
-            inset: 0;
-            background-image:
-                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 2%),
-                radial-gradient(circle at 80% 20%, rgba(0,0,0,0.1) 0%, transparent 3%),
-                radial-gradient(circle at 40% 70%, rgba(255,255,255,0.02) 0%, transparent 2%),
-                radial-gradient(circle at 90% 80%, rgba(0,0,0,0.08) 0%, transparent 2%),
-                radial-gradient(circle at 10% 90%, rgba(255,255,255,0.04) 0%, transparent 3%);
-            border-radius: 450px / 275px;
-            opacity: 0.6;
-        }
-
-        /* 桌子厚度 */
-        .table-thickness {
-            position: absolute;
-            width: 900px;
-            height: 550px;
-            border-radius: 450px / 275px;
-            background:
-                linear-gradient(to bottom,
-                    #0f3d22 0%,
-                    #0c3220 30%,
-                    #0a2818 70%,
-                    #061a10 100%
-                );
-            transform: translateZ(-60px);
-            box-shadow:
-                0 30px 80px rgba(0, 0, 0, 0.95),
-                inset 0 -5px 20px rgba(0, 0, 0, 0.6);
-        }
-
-        /* 桌腿 */
-        .table-leg {
-            position: absolute;
-            width: 60px;
-            height: 180px;
-            background: linear-gradient(135deg,
-                #0a2818 0%,
-                #061a10 50%,
-                #030d08 100%);
-            box-shadow:
-                inset -3px 0 8px rgba(0, 0, 0, 0.9),
-                6px 6px 25px rgba(0, 0, 0, 0.8);
-            transform: translateZ(-60px) translateY(60px);
-        }
-
-        .table-leg.leg1 { left: 180px; top: 120px; }
-        .table-leg.leg2 { right: 180px; top: 120px; }
-        .table-leg.leg3 { left: 180px; bottom: 120px; }
-        .table-leg.leg4 { right: 180px; bottom: 120px; }
-
-        /* 像素画容器 */
-        .pixel-canvas {
-            position: absolute;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-        }
-
-        /* 对面人物 */
-        .opposite-character {
-            top: 10%;
+            width: 300px;
+            height: 400px;
+            background: #ffffff; /* 纯白色 */
             left: 50%;
-            transform: translateX(-50%);
-            width: 520px;
-            height: 600px;
-            z-index: 1;
-        }
-
-        /* 玩家手部 - 从屏幕底部以3D视角伸到桌上 */
-        .player-hands-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 55%;
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        .player-hand {
-            position: absolute;
-            bottom: 0;
-        }
-
-        .player-hand.left {
-            left: 8%;
-        }
-
-        .player-hand.right {
-            right: 8%;
+            top: 60%;
+            transform:
+                translateX(-50%)
+                translateY(-50%)
+                rotateX(-60deg);
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.15),
+                0 10px 20px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
     <div class="scene">
-        <!-- 对面人物 -->
-        <canvas id="oppositeChar" class="pixel-canvas opposite-character" width="260" height="300"></canvas>
-
-        <!-- 3D桌子 -->
-        <div class="table-3d">
-            <div class="table-thickness"></div>
-            <div class="table-surface">
-                <!-- 左轮手枪 -->
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    <canvas id="revolverCanvas" class="pixel-canvas" width="130" height="65" style="transform: rotateX(-75deg);"></canvas>
-                </div>
+        <div class="plane">
+            <div class="plane-surface">
+                <div class="paper"></div>
             </div>
-            <div class="table-leg leg1"></div>
-            <div class="table-leg leg2"></div>
-            <div class="table-leg leg3"></div>
-            <div class="table-leg leg4"></div>
-        </div>
-
-        <!-- 玩家手部 -->
-        <div class="player-hands-container">
-            <canvas id="leftHand" class="pixel-canvas player-hand left" width="240" height="380"></canvas>
-            <canvas id="rightHand" class="pixel-canvas player-hand right" width="240" height="380"></canvas>
         </div>
     </div>
-
-    <script>
-        const PIXEL_SIZE = 2;
-
-        function drawRect(ctx, x, y, w, h, color) {
-            ctx.fillStyle = color;
-            ctx.fillRect(x, y, w, h);
-        }
-
-        function drawCircle(ctx, x, y, radius, color) {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        function drawEllipse(ctx, x, y, w, h, color) {
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.ellipse(x, y, w, h, 0, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        // ===== 绘制对面人物（卫衣帽遮住半张脸）=====
-        function drawOppositeCharacter() {
-            const canvas = document.getElementById('oppositeChar');
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // === 绿色卫衣身体 ===
-            // 肩部
-            drawEllipse(ctx, 90, 140, 25, 20, '#2d5016');
-            drawEllipse(ctx, 170, 140, 25, 20, '#2d5016');
-
-            // 身体主体（从肩部到腰部）
-            for(let y = 0; y < 140; y++) {
-                const ratio = y / 140;
-                const width = 92 - Math.abs((y - 70) / 70) * 6 + Math.sin(y * 0.15) * 2;
-                const x = 130 - width / 2;
-                drawRect(ctx, x, 130 + y, width, 1, '#2d5016');
-            }
-
-            // 卫衣左侧褶皱和阴影
-            for(let y = 0; y < 130; y++) {
-                const alpha = 0.35 + Math.sin(y * 0.3) * 0.15;
-                const x = 82 + Math.sin(y * 0.2) * 3;
-                ctx.globalAlpha = alpha;
-                drawRect(ctx, x, 135 + y, 10, 1, '#1f3310');
-            }
-            ctx.globalAlpha = 1;
-
-            // 卫衣右侧褶皱和阴影
-            for(let y = 0; y < 130; y++) {
-                const alpha = 0.35 + Math.sin(y * 0.3) * 0.15;
-                const x = 168 + Math.sin(y * 0.2) * 3;
-                ctx.globalAlpha = alpha;
-                drawRect(ctx, x, 135 + y, 10, 1, '#1f3310');
-            }
-            ctx.globalAlpha = 1;
-
-            // 卫衣中间高光
-            for(let y = 0; y < 120; y++) {
-                const width = 20 - Math.abs(y - 60) * 0.2;
-                const x = 130 - width / 2;
-                ctx.globalAlpha = 0.3;
-                drawRect(ctx, x, 140 + y, width, 1, '#35611c');
-            }
-            ctx.globalAlpha = 1;
-
-            // === 卫衣帽（连体帽）===
-            // 帽兜背面（从肩部升起）
-            for(let y = 0; y < 80; y++) {
-                const width = 50 - y * 0.2;
-                const x = 130 - width / 2;
-                const color = y < 20 ? '#2d5016' : '#283d12';
-                drawRect(ctx, x, 60 + y, width, 1, color);
-            }
-
-            // 帽兜顶部（圆润）
-            drawEllipse(ctx, 130, 50, 42, 25, '#283d12');
-            for(let i = 0; i < 20; i++) {
-                const size = 42 - i * 1.5;
-                drawEllipse(ctx, 130, 45 + i, size, 22 - i * 0.8, '#2a4014');
-            }
-
-            // 帽兜边缘（遮住脸部）
-            for(let x = -45; x <= 45; x++) {
-                const curve = Math.sqrt(Math.max(0, 2025 - x * x)) * 0.4;
-                const y = 70 + curve;
-                drawRect(ctx, 130 + x, y, 1, 3, '#243d12');
-            }
-
-            // 帽兜内侧阴影（深色）
-            for(let y = 0; y < 40; y++) {
-                const width = 38 - y * 0.5;
-                const x = 130 - width / 2;
-                ctx.globalAlpha = 0.7 - y * 0.015;
-                drawRect(ctx, x, 75 + y, width, 1, '#0a0a0a');
-            }
-            ctx.globalAlpha = 1;
-
-            // === 脸部（被帽兜遮住下半部分）===
-            // 脸部轮廓（只能看到下半张脸）
-            for(let y = 40; y < 80; y++) {
-                const ratio = (y - 40) / 40;
-                const width = 32 + ratio * 10;
-                drawEllipse(ctx, 130, 80 + y, width / 2, 1, '#5a5550');
-            }
-
-            // 帽兜对脸部的强烈阴影
-            for(let y = 0; y < 35; y++) {
-                const alpha = 0.85 - (y / 35) * 0.4;
-                const width = 32 + (y / 35) * 10;
-                ctx.globalAlpha = alpha;
-                drawEllipse(ctx, 130, 85 + y, width / 2, 1, '#0a0a0a');
-            }
-            ctx.globalAlpha = 1;
-
-            // 只能隐约看到的五官
-            // 眼睛（在阴影中，几乎看不清）
-            ctx.globalAlpha = 0.3;
-            drawEllipse(ctx, 115, 100, 4, 2, '#1a1816');
-            drawEllipse(ctx, 145, 100, 4, 2, '#1a1816');
-            ctx.globalAlpha = 1;
-
-            // 鼻子（隐约可见）
-            drawRect(ctx, 128, 110, 4, 8, '#4a4543');
-            ctx.globalAlpha = 0.4;
-            drawCircle(ctx, 127, 116, 1.5, '#3a3836');
-            drawCircle(ctx, 133, 116, 1.5, '#3a3836');
-            ctx.globalAlpha = 1;
-
-            // 嘴巴（下半部分可见）
-            drawRect(ctx, 120, 128, 20, 2, '#3a3836');
-
-            // === 脸上的血迹 ===
-            // 从看不见的地方流下的血
-            let bloodX = 118;
-            let bloodY = 105;
-            for(let i = 0; i < 30; i++) {
-                const width = 2 + Math.sin(i * 0.3) * 1;
-                bloodX += Math.sin(i * 0.5) * 0.3;
-                bloodY += 1;
-                ctx.globalAlpha = 0.7 - i * 0.015;
-                drawRect(ctx, bloodX, bloodY, width, 1, i % 3 === 0 ? '#6a1515' : '#4a1010');
-            }
-            ctx.globalAlpha = 1;
-
-            // 右侧脸颊血迹
-            drawEllipse(ctx, 148, 108, 3, 7, '#5a1515');
-            drawRect(ctx, 147, 112, 3, 10, '#3d0d0d');
-
-            // === 颈部 ===
-            for(let y = 0; y < 25; y++) {
-                const width = 20 - y * 0.4;
-                drawEllipse(ctx, 130, 160 + y, width, 1, '#5a5550');
-            }
-
-            // === 卫衣上的血迹 ===
-            // 左胸大块血迹
-            const blood1X = 95, blood1Y = 180;
-            drawEllipse(ctx, blood1X, blood1Y, 14, 18, '#6a1a1a');
-            drawEllipse(ctx, blood1X + 2, blood1Y + 2, 12, 16, '#5a1515');
-            drawEllipse(ctx, blood1X + 3, blood1Y + 3, 10, 14, '#4a1010');
-            drawEllipse(ctx, blood1X + 4, blood1Y + 4, 8, 12, '#3d0d0d');
-
-            // 血液流淌
-            let flowX = blood1X + 4;
-            let flowY = blood1Y + 16;
-            for(let i = 0; i < 35; i++) {
-                const width = Math.max(1, 3.5 - i * 0.08);
-                flowX += Math.sin(i * 0.4) * 0.5;
-                flowY += 1;
-                ctx.globalAlpha = Math.max(0.3, 1 - i * 0.022);
-                drawRect(ctx, flowX, flowY, width, 1, '#3d0d0d');
-            }
-            ctx.globalAlpha = 1;
-
-            // 右侧溅射
-            const splatter = [
-                {x: 155, y: 175, r: 7},
-                {x: 163, y: 180, r: 5},
-                {x: 158, y: 186, r: 3.5},
-                {x: 167, y: 172, r: 3},
-                {x: 160, y: 192, r: 2.5}
-            ];
-
-            splatter.forEach(s => {
-                drawCircle(ctx, s.x, s.y, s.r, '#5a1515');
-                drawCircle(ctx, s.x, s.y, s.r * 0.7, '#4a1010');
-            });
-
-            // 中下部血迹
-            drawEllipse(ctx, 120, 230, 12, 14, '#5a1515');
-            drawEllipse(ctx, 121, 232, 10, 12, '#4a1010');
-            drawEllipse(ctx, 122, 234, 8, 10, '#3d0d0d');
-
-            // 小血滴
-            drawCircle(ctx, 108, 250, 2.5, '#3d0d0d');
-            drawCircle(ctx, 132, 258, 2, '#4a1010');
-            drawCircle(ctx, 150, 242, 2.5, '#3d0d0d');
-
-            // === 绳子（绑在背后）===
-            for(let y = 0; y < 55; y++) {
-                const x = 70 + Math.sin(y * 0.2) * 2;
-                const width = 6 + Math.sin(y * 0.5) * 1;
-                drawRect(ctx, x, 190 + y, width, 1, '#4a3828');
-                drawRect(ctx, x + 1, 190 + y, width - 2, 1, '#5a4838');
-            }
-
-            for(let y = 0; y < 55; y++) {
-                const x = 184 + Math.sin(y * 0.2) * 2;
-                const width = 6 + Math.sin(y * 0.5) * 1;
-                drawRect(ctx, x, 190 + y, width, 1, '#4a3828');
-                drawRect(ctx, x + 1, 190 + y, width - 2, 1, '#5a4838');
-            }
-        }
-
-        // ===== 绘制左轮手枪 =====
-        function drawRevolver() {
-            const canvas = document.getElementById('revolverCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-
-            // 枪管
-            drawRect(ctx, 32, 26, 38, 13, '#0d0d0d');
-            drawRect(ctx, 33, 27, 36, 11, '#1a1a1a');
-            drawRect(ctx, 32, 28, 3, 9, '#000000');
-
-            // 弹仓
-            drawCircle(ctx, 73, 32, 11, '#1a1a1a');
-            drawCircle(ctx, 73, 32, 9, '#2a2a2a');
-
-            // 弹仓孔
-            for(let i = 0; i < 6; i++) {
-                const angle = (i / 6) * Math.PI * 2;
-                const x = 73 + Math.cos(angle) * 4.5;
-                const y = 32 + Math.sin(angle) * 4.5;
-                drawCircle(ctx, x, y, 1.8, '#0d0d0d');
-            }
-
-            // 扳机护圈
-            ctx.strokeStyle = '#2a2a2a';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(77, 41, 9, 0, Math.PI);
-            ctx.stroke();
-
-            // 扳机
-            drawRect(ctx, 75, 41, 5, 7, '#3a3a3a');
-
-            // 握把
-            for(let i = 0; i < 11; i++) {
-                const width = 15 - i * 1.2;
-                drawRect(ctx, 79, 45 + i * 2.7, width, 2, '#1a1a1a');
-            }
-
-            // 握把纹理
-            for(let i = 0; i < 9; i++) {
-                drawRect(ctx, 81, 47 + i * 2.7, 9, 1, '#2a2a2a');
-            }
-
-            // 高光
-            drawRect(ctx, 34, 28, 14, 1, '#3a3a3a');
-            drawCircle(ctx, 71, 30, 2.5, '#3a3a3a');
-        }
-
-        // ===== 绘制玩家左手（3D视角，从屏幕底部延伸到桌上）=====
-        function drawLeftHand() {
-            const canvas = document.getElementById('leftHand');
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 手臂（从底部伸出，有3D透视感 - 从细到粗）
-            for(let y = 0; y < 220; y++) {
-                const alpha = Math.min(1, y / 100);
-                const r = 139, g = 125, b = 107;
-                // 透视：越靠近底部（屏幕）越粗
-                const width = 35 + (220 - y) * 0.2;
-                const x = 90 - width / 2;
-                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                drawRect(ctx, x, y, width, 1);
-
-                // 手臂阴影
-                if(alpha > 0.3) {
-                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha * 0.5})`;
-                    drawRect(ctx, x, y, 9, 1);
-                }
-            }
-
-            // 手腕
-            drawEllipse(ctx, 90, 230, 28, 17, '#8b7d6b');
-            drawEllipse(ctx, 90, 232, 26, 15, '#9a8a75');
-            drawEllipse(ctx, 90, 227, 26, 14, '#7a6d5f');
-
-            // 铁链（圆环形）
-            function drawChainLink(x, y, size, alpha = 1) {
-                ctx.globalAlpha = alpha;
-                ctx.strokeStyle = '#4a4a4a';
-                ctx.lineWidth = 4.5;
-                ctx.beginPath();
-                ctx.ellipse(x, y, size, size * 0.65, 0, 0, Math.PI * 2);
-                ctx.stroke();
-
-                ctx.strokeStyle = '#5a5a5a';
-                ctx.lineWidth = 1.8;
-                ctx.beginPath();
-                ctx.ellipse(x, y, size - 1.8, size * 0.65 - 1.8, 0, 0, Math.PI * 2);
-                ctx.stroke();
-
-                ctx.strokeStyle = '#6a6a6a';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.ellipse(x - 1, y - 1, size - 2.5, size * 0.65 - 2.5, 0, Math.PI * 1.2, Math.PI * 1.8);
-                ctx.stroke();
-
-                ctx.globalAlpha = 1;
-            }
-
-            // 手腕链环
-            drawChainLink(90, 230, 11, 1);
-            drawChainLink(105, 230, 10, 0.95);
-            drawChainLink(119, 230, 9.5, 0.85);
-            drawChainLink(132, 230, 9, 0.7);
-            drawChainLink(144, 230, 8.5, 0.5);
-            drawChainLink(155, 230, 8, 0.3);
-
-            // 手掌
-            drawEllipse(ctx, 90, 280, 30, 36, '#8b7d6b');
-            drawEllipse(ctx, 90, 281, 28, 34, '#9a8a75');
-
-            // 手掌阴影
-            for(let i = 0; i < 14; i++) {
-                ctx.globalAlpha = 0.38 - i * 0.025;
-                drawEllipse(ctx, 88, 272, 28 - i * 0.7, 34 - i * 0.7, '#7a6d5f');
-            }
-            ctx.globalAlpha = 1;
-
-            // 手掌纹路
-            ctx.strokeStyle = '#8a7a68';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(65, 292);
-            ctx.quadraticCurveTo(90, 295, 115, 292);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(68, 304);
-            ctx.quadraticCurveTo(90, 307, 112, 304);
-            ctx.stroke();
-
-            // 拇指
-            drawEllipse(ctx, 55, 292, 11, 18, '#8b7d6b');
-            drawEllipse(ctx, 55, 292, 10, 16, '#9a8a75');
-            drawEllipse(ctx, 54, 287, 9, 14, '#7a6d5f');
-            drawRect(ctx, 50, 299, 10, 1, '#8a7a68');
-
-            // 手指（有透视感 - 伸向桌子）
-            // 食指
-            for(let i = 0; i < 55; i++) {
-                const width = 8 - i * 0.06;
-                const y = 316 + i;
-                drawEllipse(ctx, 68, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 68, 320, 4, 28, '#9a8a75');
-            drawRect(ctx, 65, 337, 7, 1, '#8a7a68');
-            drawRect(ctx, 65, 354, 7, 1, '#8a7a68');
-
-            // 中指
-            for(let i = 0; i < 62; i++) {
-                const width = 8 - i * 0.05;
-                const y = 316 + i;
-                drawEllipse(ctx, 90, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 90, 320, 4, 31, '#9a8a75');
-            drawRect(ctx, 87, 340, 7, 1, '#8a7a68');
-            drawRect(ctx, 87, 361, 7, 1, '#8a7a68');
-
-            // 无名指
-            for(let i = 0; i < 55; i++) {
-                const width = 8 - i * 0.06;
-                const y = 316 + i;
-                drawEllipse(ctx, 112, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 112, 320, 4, 28, '#9a8a75');
-            drawRect(ctx, 109, 337, 7, 1, '#8a7a68');
-            drawRect(ctx, 109, 354, 7, 1, '#8a7a68');
-
-            // 小指
-            for(let i = 0; i < 48; i++) {
-                const width = 7 - i * 0.06;
-                const y = 316 + i;
-                drawEllipse(ctx, 130, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 130, 320, 3.5, 24, '#9a8a75');
-            drawRect(ctx, 127, 333, 7, 1, '#8a7a68');
-            drawRect(ctx, 127, 350, 7, 1, '#8a7a68');
-        }
-
-        // ===== 绘制玩家右手 =====
-        function drawRightHand() {
-            const canvas = document.getElementById('rightHand');
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = false;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 手臂
-            for(let y = 0; y < 220; y++) {
-                const alpha = Math.min(1, y / 100);
-                const r = 139, g = 125, b = 107;
-                const width = 35 + (220 - y) * 0.2;
-                const x = 150 - width / 2;
-                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                drawRect(ctx, x, y, width, 1);
-
-                if(alpha > 0.3) {
-                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha * 0.5})`;
-                    drawRect(ctx, x + width - 9, y, 9, 1);
-                }
-            }
-
-            // 手腕
-            drawEllipse(ctx, 150, 230, 28, 17, '#8b7d6b');
-            drawEllipse(ctx, 150, 232, 26, 15, '#9a8a75');
-            drawEllipse(ctx, 150, 227, 26, 14, '#7a6d5f');
-
-            // 铁链
-            function drawChainLink(x, y, size, alpha = 1) {
-                ctx.globalAlpha = alpha;
-                ctx.strokeStyle = '#4a4a4a';
-                ctx.lineWidth = 4.5;
-                ctx.beginPath();
-                ctx.ellipse(x, y, size, size * 0.65, 0, 0, Math.PI * 2);
-                ctx.stroke();
-
-                ctx.strokeStyle = '#5a5a5a';
-                ctx.lineWidth = 1.8;
-                ctx.beginPath();
-                ctx.ellipse(x, y, size - 1.8, size * 0.65 - 1.8, 0, 0, Math.PI * 2);
-                ctx.stroke();
-
-                ctx.strokeStyle = '#6a6a6a';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.ellipse(x - 1, y - 1, size - 2.5, size * 0.65 - 2.5, 0, Math.PI * 1.2, Math.PI * 1.8);
-                ctx.stroke();
-
-                ctx.globalAlpha = 1;
-            }
-
-            drawChainLink(150, 230, 11, 1);
-            drawChainLink(135, 230, 10, 0.95);
-            drawChainLink(121, 230, 9.5, 0.85);
-            drawChainLink(108, 230, 9, 0.7);
-            drawChainLink(96, 230, 8.5, 0.5);
-            drawChainLink(85, 230, 8, 0.3);
-
-            // 手掌
-            drawEllipse(ctx, 150, 280, 30, 36, '#8b7d6b');
-            drawEllipse(ctx, 150, 281, 28, 34, '#9a8a75');
-
-            for(let i = 0; i < 14; i++) {
-                ctx.globalAlpha = 0.38 - i * 0.025;
-                drawEllipse(ctx, 152, 272, 28 - i * 0.7, 34 - i * 0.7, '#7a6d5f');
-            }
-            ctx.globalAlpha = 1;
-
-            // 手掌纹路
-            ctx.strokeStyle = '#8a7a68';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(125, 292);
-            ctx.quadraticCurveTo(150, 295, 175, 292);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(128, 304);
-            ctx.quadraticCurveTo(150, 307, 172, 304);
-            ctx.stroke();
-
-            // 拇指（右手在右侧）
-            drawEllipse(ctx, 185, 292, 11, 18, '#8b7d6b');
-            drawEllipse(ctx, 185, 292, 10, 16, '#9a8a75');
-            drawEllipse(ctx, 186, 287, 9, 14, '#7a6d5f');
-            drawRect(ctx, 180, 299, 10, 1, '#8a7a68');
-
-            // 手指
-            // 小指
-            for(let i = 0; i < 48; i++) {
-                const width = 7 - i * 0.06;
-                const y = 316 + i;
-                drawEllipse(ctx, 110, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 110, 320, 3.5, 24, '#9a8a75');
-            drawRect(ctx, 107, 333, 7, 1, '#8a7a68');
-            drawRect(ctx, 107, 350, 7, 1, '#8a7a68');
-
-            // 无名指
-            for(let i = 0; i < 55; i++) {
-                const width = 8 - i * 0.06;
-                const y = 316 + i;
-                drawEllipse(ctx, 128, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 128, 320, 4, 28, '#9a8a75');
-            drawRect(ctx, 125, 337, 7, 1, '#8a7a68');
-            drawRect(ctx, 125, 354, 7, 1, '#8a7a68');
-
-            // 中指
-            for(let i = 0; i < 62; i++) {
-                const width = 8 - i * 0.05;
-                const y = 316 + i;
-                drawEllipse(ctx, 150, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 150, 320, 4, 31, '#9a8a75');
-            drawRect(ctx, 147, 340, 7, 1, '#8a7a68');
-            drawRect(ctx, 147, 361, 7, 1, '#8a7a68');
-
-            // 食指
-            for(let i = 0; i < 55; i++) {
-                const width = 8 - i * 0.06;
-                const y = 316 + i;
-                drawEllipse(ctx, 172, y, width / 2, 0.7, '#8b7d6b');
-            }
-            drawEllipse(ctx, 172, 320, 4, 28, '#9a8a75');
-            drawRect(ctx, 169, 337, 7, 1, '#8a7a68');
-            drawRect(ctx, 169, 354, 7, 1, '#8a7a68');
-        }
-
-        // 初始化
-        drawOppositeCharacter();
-        drawRevolver();
-        drawLeftHand();
-        drawRightHand();
-
-        document.querySelectorAll('.pixel-canvas').forEach(canvas => {
-            canvas.style.width = (canvas.width * PIXEL_SIZE) + 'px';
-            canvas.style.height = (canvas.height * PIXEL_SIZE) + 'px';
-        });
-    </script>
 </body>
 </html>
