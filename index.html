@@ -23,83 +23,137 @@
             width: 100%;
             height: 100%;
             position: relative;
-            perspective: 1400px;
-            perspective-origin: 50% 35%;
+            perspective: 1000px;
+            perspective-origin: 50% 40%;
         }
 
-        /* 3D桌子 - 更大，有明显高度 */
+        /* === 3D桌子建模 === */
         .table-3d {
             position: absolute;
-            top: 40%;
+            top: 45%;
             left: 50%;
-            transform: translateX(-50%) rotateX(77deg);
             transform-style: preserve-3d;
+            transform: translateX(-50%) translateZ(-200px) rotateX(75deg);
         }
 
-        .table-top {
-            width: 700px;
-            height: 400px;
-            background: #1a5c3a;
-            border-radius: 200px / 200px;
+        /* 桌面（椭圆形） */
+        .table-surface {
+            width: 800px;
+            height: 500px;
+            background:
+                radial-gradient(ellipse at 50% 50%, #1e6b42 0%, #1a5c3a 50%, #143d22 100%);
+            border-radius: 400px / 250px;
             position: relative;
             box-shadow:
-                inset 0 0 40px rgba(0, 0, 0, 0.4),
-                0 30px 60px rgba(0, 0, 0, 0.9);
+                inset 0 0 50px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(0, 0, 0, 0.8);
+            transform: translateZ(0);
         }
 
-        /* 桌子表面细节 */
-        .table-top::before {
+        /* 桌面纹理 */
+        .table-surface::before {
             content: '';
             position: absolute;
-            inset: 15px;
-            background: #1e6b42;
-            border-radius: 185px / 185px;
-            box-shadow: inset 0 8px 25px rgba(0, 0, 0, 0.3);
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 50% 50%,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    transparent 70%);
+            border-radius: 400px / 250px;
         }
 
-        /* 桌子边缘厚度（3D高度） */
+        /* 桌面边缘 */
         .table-edge {
             position: absolute;
-            width: 700px;
-            height: 400px;
-            border-radius: 200px / 200px;
-            background: linear-gradient(to bottom, #143d22, #0a2415);
-            transform: translateZ(-40px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            width: 800px;
+            height: 500px;
+            border-radius: 400px / 250px;
+            background: linear-gradient(to bottom,
+                #0f3520 0%,
+                #0a2415 50%,
+                #051810 100%);
+            transform: translateZ(-50px);
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.9),
+                inset 0 5px 15px rgba(0, 0, 0, 0.5);
         }
 
+        /* 桌子侧面（用多个div模拟圆形侧面） */
         .table-side {
             position: absolute;
-            background: #0f3520;
-            transform-style: preserve-3d;
+            background: linear-gradient(to bottom, #0d2f1c, #061a10);
         }
 
         .table-side.front {
-            width: 700px;
-            height: 40px;
-            bottom: -40px;
-            border-radius: 0 0 200px 200px / 0 0 100px 100px;
+            width: 600px;
+            height: 50px;
+            left: 100px;
+            top: 475px;
+            transform: rotateX(-90deg) translateZ(25px);
+            border-radius: 0 0 300px 300px / 0 0 150px 150px;
+        }
+
+        .table-side.back {
+            width: 600px;
+            height: 50px;
+            left: 100px;
+            top: 25px;
+            transform: rotateX(90deg) translateZ(-25px);
+            border-radius: 300px 300px 0 0 / 150px 150px 0 0;
+        }
+
+        .table-side.left {
+            width: 50px;
+            height: 300px;
+            left: 100px;
+            top: 100px;
+            transform: rotateY(90deg) translateZ(-25px);
+        }
+
+        .table-side.right {
+            width: 50px;
+            height: 300px;
+            right: 100px;
+            top: 100px;
+            transform: rotateY(-90deg) translateZ(-25px);
         }
 
         /* 桌腿 */
         .table-leg {
             position: absolute;
-            width: 35px;
-            height: 120px;
-            background: linear-gradient(to bottom, #0d3320, #051a10);
-            transform-style: preserve-3d;
-            transform: translateZ(-40px) translateY(40px);
-            box-shadow: -6px 0 12px rgba(0, 0, 0, 0.6);
+            width: 50px;
+            height: 150px;
+            background: linear-gradient(135deg,
+                #0a2415 0%,
+                #051810 50%,
+                #020c08 100%);
+            box-shadow:
+                inset -2px 0 5px rgba(0, 0, 0, 0.8),
+                5px 5px 20px rgba(0, 0, 0, 0.7);
         }
 
-        .table-leg.front-left {
-            bottom: -160px;
-            left: 130px;
+        .table-leg.leg1 {
+            left: 150px;
+            top: 100px;
+            transform: translateZ(-50px) translateY(50px);
         }
 
-        .table-leg.front-right {
-            bottom: -160px;
-            right: 130px;
+        .table-leg.leg2 {
+            right: 150px;
+            top: 100px;
+            transform: translateZ(-50px) translateY(50px);
+        }
+
+        .table-leg.leg3 {
+            left: 150px;
+            bottom: 100px;
+            transform: translateZ(-50px) translateY(50px);
+        }
+
+        .table-leg.leg4 {
+            right: 150px;
+            bottom: 100px;
+            transform: translateZ(-50px) translateY(50px);
         }
 
         /* 像素画容器 */
@@ -115,54 +169,73 @@
             top: 8%;
             left: 50%;
             transform: translateX(-50%);
-            width: 400px;
-            height: 480px;
+            width: 480px;
+            height: 560px;
+            z-index: 1;
         }
 
-        /* 玩家手部 - 在桌子上 */
+        /* 左轮手枪 - 在桌子上 */
+        .revolver-container {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+
+        /* 玩家手部 - 第一人称视角，从屏幕底部伸出 */
         .player-hands-container {
             position: absolute;
-            top: 42%;
+            bottom: 0;
             left: 0;
             right: 0;
-            height: 58%;
+            height: 50%;
             pointer-events: none;
+            z-index: 3;
         }
 
         .player-hand {
             position: absolute;
-            top: 0;
+            bottom: 0;
         }
 
         .player-hand.left {
-            left: 15%;
+            left: 10%;
         }
 
         .player-hand.right {
-            right: 15%;
+            right: 10%;
         }
     </style>
 </head>
 <body>
     <div class="scene">
         <!-- 对面人物像素画 -->
-        <canvas id="oppositeChar" class="pixel-canvas opposite-character" width="200" height="240"></canvas>
+        <canvas id="oppositeChar" class="pixel-canvas opposite-character" width="240" height="280"></canvas>
 
         <!-- 3D桌子 -->
         <div class="table-3d">
             <div class="table-edge"></div>
-            <div class="table-top">
-                <!-- 左轮手枪像素画 -->
-                <canvas id="revolverCanvas" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(-77deg); image-rendering: pixelated;" width="100" height="50"></canvas>
+            <div class="table-surface">
+                <!-- 左轮手枪放在桌面上 -->
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <canvas id="revolverCanvas" class="pixel-canvas" width="120" height="60" style="transform: rotateX(-75deg);"></canvas>
+                </div>
             </div>
-            <div class="table-leg front-left"></div>
-            <div class="table-leg front-right"></div>
+            <div class="table-side front"></div>
+            <div class="table-side back"></div>
+            <div class="table-side left"></div>
+            <div class="table-side right"></div>
+            <div class="table-leg leg1"></div>
+            <div class="table-leg leg2"></div>
+            <div class="table-leg leg3"></div>
+            <div class="table-leg leg4"></div>
         </div>
 
-        <!-- 玩家手部 -->
+        <!-- 玩家手部（第一人称） -->
         <div class="player-hands-container">
-            <canvas id="leftHand" class="pixel-canvas player-hand left" width="180" height="280"></canvas>
-            <canvas id="rightHand" class="pixel-canvas player-hand right" width="180" height="280"></canvas>
+            <canvas id="leftHand" class="pixel-canvas player-hand left" width="220" height="350"></canvas>
+            <canvas id="rightHand" class="pixel-canvas player-hand right" width="220" height="350"></canvas>
         </div>
     </div>
 
@@ -170,13 +243,12 @@
         // 像素尺寸
         const PIXEL_SIZE = 2;
 
-        // 绘制矩形区域
+        // 绘制工具函数
         function drawRect(ctx, x, y, w, h, color) {
             ctx.fillStyle = color;
             ctx.fillRect(x, y, w, h);
         }
 
-        // 绘制圆形
         function drawCircle(ctx, x, y, radius, color) {
             ctx.fillStyle = color;
             ctx.beginPath();
@@ -184,7 +256,6 @@
             ctx.fill();
         }
 
-        // 绘制椭圆
         function drawEllipse(ctx, x, y, w, h, color) {
             ctx.fillStyle = color;
             ctx.beginPath();
@@ -192,169 +263,219 @@
             ctx.fill();
         }
 
-        // ===== 绘制对面人物（更有机的设计）=====
+        // ===== 绘制对面人物（更像真人的2D像素画）=====
         function drawOppositeCharacter() {
             const canvas = document.getElementById('oppositeChar');
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // === 帽子 ===
-            // 帽子顶部（圆润）
-            drawEllipse(ctx, 100, 35, 32, 18, '#1a1a1a');
-            drawRect(ctx, 68, 35, 64, 15, '#1a1a1a');
-
-            // 帽子细节和折痕
-            drawEllipse(ctx, 100, 38, 28, 14, '#252525');
-            drawRect(ctx, 72, 38, 56, 12, '#252525');
-
-            // 帽檐（有弧度）
-            for(let x = 0; x < 80; x++) {
-                const curve = Math.sin((x / 80) * Math.PI) * 2;
-                drawRect(ctx, 60 + x, 50 + curve, 1, 5, '#1f1f1f');
+            // === 帽子（更真实的形状） ===
+            // 帽子顶部
+            drawEllipse(ctx, 120, 42, 38, 22, '#1a1a1a');
+            // 帽子圆顶
+            for(let y = 0; y < 25; y++) {
+                const width = 38 - (y * 0.3);
+                drawEllipse(ctx, 120, 30 + y, width, 20 - y * 0.5, '#1f1f1f');
             }
-            drawRect(ctx, 60, 52, 80, 4, '#0d0d0d');
+            // 帽子中部褶皱
+            drawEllipse(ctx, 120, 45, 36, 18, '#252525');
 
-            // === 头部（圆润的脸型）===
-            // 脸部轮廓（椭圆形，被帽子部分遮挡）
-            drawEllipse(ctx, 100, 75, 24, 28, '#4a4543');
-
-            // 脸部基础色（略浅）
-            drawEllipse(ctx, 100, 77, 22, 26, '#524f4a');
-
-            // 帽子对脸部的阴影（帽檐下方）
-            for(let y = 56; y < 68; y++) {
-                const alpha = (y - 56) / 12;
-                ctx.globalAlpha = 0.6 - alpha * 0.4;
-                drawEllipse(ctx, 100, 75, 22, 26, '#1a1a1a');
+            // 帽檐（有厚度和弧度）
+            for(let x = 0; x < 100; x++) {
+                const curve = Math.sin((x / 100) * Math.PI) * 3;
+                const y = 60 + curve;
+                drawRect(ctx, 70 + x, y, 1, 6, '#1a1a1a');
+                drawRect(ctx, 70 + x, y + 1, 1, 4, '#0d0d0d');
             }
-            ctx.globalAlpha = 1;
+            // 帽檐边缘高光
+            for(let x = 0; x < 100; x++) {
+                const curve = Math.sin((x / 100) * Math.PI) * 3;
+                drawRect(ctx, 70 + x, 60 + curve, 1, 1, '#2a2a2a');
+            }
 
-            // 隐约可见的五官
-            // 左眼（模糊）
-            drawEllipse(ctx, 90, 72, 3, 2, '#2a2826');
-            drawRect(ctx, 88, 71, 4, 2, '#1a1816');
+            // === 头部（真实的人脸轮廓） ===
+            // 脸部整体形状（椭圆，上窄下宽）
+            for(let y = 0; y < 60; y++) {
+                const ratio = y / 60;
+                const width = 28 + ratio * 8; // 从28逐渐变宽到36
+                const x = 120;
+                drawEllipse(ctx, x, 70 + y, width / 2, 1, '#5a5550');
+            }
 
-            // 右眼（模糊）
-            drawEllipse(ctx, 110, 72, 3, 2, '#2a2826');
-            drawRect(ctx, 108, 71, 4, 2, '#1a1816');
-
-            // 鼻子（非常隐约）
-            drawRect(ctx, 99, 78, 2, 4, '#3d3a38');
-
-            // === 脸上的血迹（自然流淌）===
-            // 左侧血迹
-            const bloodY1 = 75;
-            for(let i = 0; i < 15; i++) {
-                const y = bloodY1 + i;
-                const width = 2 + Math.sin(i * 0.5) * 1;
-                const x = 92 + Math.sin(i * 0.8) * 0.5;
-                ctx.globalAlpha = 0.7 + Math.sin(i) * 0.2;
-                drawRect(ctx, x, y, width, 1, i % 3 === 0 ? '#5a1818' : '#4a1010');
+            // 帽子对脸部的阴影
+            for(let y = 0; y < 20; y++) {
+                const alpha = 0.7 - (y / 20) * 0.5;
+                ctx.globalAlpha = alpha;
+                const width = 28 + (y / 20) * 8;
+                drawEllipse(ctx, 120, 70 + y, width / 2, 1, '#1a1a1a');
             }
             ctx.globalAlpha = 1;
 
-            // 右侧血迹
-            drawEllipse(ctx, 112, 76, 2, 4, '#4a1010');
-            drawRect(ctx, 111, 78, 3, 6, '#3d0d0d');
-            drawRect(ctx, 112, 82, 2, 4, '#5a1818');
+            // 脸部高光（脸颊）
+            drawEllipse(ctx, 105, 95, 6, 8, 'rgba(200, 180, 160, 0.1)');
+            drawEllipse(ctx, 135, 95, 6, 8, 'rgba(200, 180, 160, 0.1)');
 
-            // === 颈部（自然过渡）===
-            // 下巴到颈部的圆润过渡
-            drawEllipse(ctx, 100, 103, 16, 8, '#4a4543');
-            drawRect(ctx, 84, 103, 32, 10, '#4a4543');
+            // === 五官（隐约可见但清晰） ===
+            // 眉毛（在阴影下）
+            drawRect(ctx, 100, 82, 10, 2, '#2a2826');
+            drawRect(ctx, 130, 82, 10, 2, '#2a2826');
 
+            // 眼睛（半遮挡但可见）
+            // 左眼
+            drawEllipse(ctx, 105, 88, 5, 3, '#3a3836');
+            drawEllipse(ctx, 105, 88, 3, 2, '#1a1816');
+            drawCircle(ctx, 106, 87, 1, '#0a0808');
+
+            // 右眼
+            drawEllipse(ctx, 135, 88, 5, 3, '#3a3836');
+            drawEllipse(ctx, 135, 88, 3, 2, '#1a1816');
+            drawCircle(ctx, 134, 87, 1, '#0a0808');
+
+            // 鼻子（有立体感）
+            drawRect(ctx, 118, 95, 4, 12, '#4a4543');
+            drawRect(ctx, 119, 96, 2, 10, '#5a5550');
+            // 鼻孔
+            drawCircle(ctx, 117, 105, 1.5, '#3a3836');
+            drawCircle(ctx, 123, 105, 1.5, '#3a3836');
+
+            // 嘴巴（紧闭）
+            drawRect(ctx, 110, 115, 20, 2, '#3a3836');
+            drawRect(ctx, 112, 117, 16, 1, '#2a2826');
+
+            // === 脸上的血迹（自然流淌） ===
+            // 从眼睛下方流下的血
+            let bloodX = 108;
+            let bloodY = 90;
+            for(let i = 0; i < 25; i++) {
+                const width = 2 + Math.sin(i * 0.3) * 1;
+                bloodX += Math.sin(i * 0.5) * 0.3;
+                bloodY += 1;
+                ctx.globalAlpha = 0.8 - i * 0.02;
+                drawRect(ctx, bloodX, bloodY, width, 1, i % 3 === 0 ? '#6a1515' : '#4a1010');
+            }
+            ctx.globalAlpha = 1;
+
+            // 右侧脸颊血迹
+            drawEllipse(ctx, 138, 92, 3, 6, '#5a1515');
+            drawEllipse(ctx, 139, 94, 2, 5, '#4a1010');
+            drawRect(ctx, 138, 98, 2, 8, '#3d0d0d');
+
+            // === 颈部（自然过渡） ===
+            for(let y = 0; y < 20; y++) {
+                const width = 18 - y * 0.3;
+                drawEllipse(ctx, 120, 130 + y, width, 1, '#5a5550');
+            }
             // 颈部阴影
-            drawRect(ctx, 88, 105, 24, 3, '#3d3a38');
+            drawRect(ctx, 110, 132, 20, 4, 'rgba(0, 0, 0, 0.3)');
 
-            // === 绿色卫衣（有机形状）===
-            // 肩部（圆润）
-            drawEllipse(ctx, 70, 125, 18, 15, '#2d5016');
-            drawEllipse(ctx, 130, 125, 18, 15, '#2d5016');
+            // === 绿色卫衣（更真实的衣服形状） ===
+            // 肩部（圆润的肩膀）
+            drawEllipse(ctx, 80, 160, 22, 18, '#2d5016');
+            drawEllipse(ctx, 160, 160, 22, 18, '#2d5016');
 
-            // 身体主体（略微梯形，更自然）
-            for(let y = 0; y < 100; y++) {
-                const width = 68 + Math.sin(y * 0.1) * 3;
-                const x = 100 - width / 2;
-                drawRect(ctx, x, 118 + y, width, 1, '#2d5016');
+            // 身体主体（从肩部到腰部的自然轮廓）
+            for(let y = 0; y < 120; y++) {
+                const ratio = y / 120;
+                // 腰部稍微收窄
+                const width = 85 - Math.abs((y - 60) / 60) * 5 + Math.sin(y * 0.15) * 2;
+                const x = 120 - width / 2;
+                const baseColor = '#2d5016';
+                drawRect(ctx, x, 150 + y, width, 1, baseColor);
             }
 
-            // 卫衣帽兜边缘
-            for(let x = 0; x < 56; x++) {
-                const curve = Math.sin((x / 56) * Math.PI) * 2;
-                drawRect(ctx, 72 + x, 118 + curve, 1, 1, '#243d12');
+            // 卫衣领口
+            for(let x = -20; x <= 20; x++) {
+                const y = 150 + Math.abs(x) * 0.3;
+                drawRect(ctx, 120 + x, y, 1, 2, '#243d12');
             }
 
-            // 卫衣褶皱和阴影（左侧）
-            for(let y = 0; y < 95; y++) {
-                const alpha = 0.3 + Math.sin(y * 0.2) * 0.1;
+            // 卫衣褶皱（左侧）
+            for(let y = 0; y < 110; y++) {
+                const alpha = 0.4 + Math.sin(y * 0.3) * 0.15;
+                const x = 75 + Math.sin(y * 0.2) * 3;
                 ctx.globalAlpha = alpha;
-                drawRect(ctx, 66, 120 + y, 12, 1, '#1f3310');
+                drawRect(ctx, x, 155 + y, 8, 1, '#1f3310');
             }
             ctx.globalAlpha = 1;
 
-            // 卫衣褶皱和阴影（右侧）
-            for(let y = 0; y < 95; y++) {
-                const alpha = 0.3 + Math.sin(y * 0.2) * 0.1;
+            // 卫衣褶皱（右侧）
+            for(let y = 0; y < 110; y++) {
+                const alpha = 0.4 + Math.sin(y * 0.3) * 0.15;
+                const x = 157 + Math.sin(y * 0.2) * 3;
                 ctx.globalAlpha = alpha;
-                drawRect(ctx, 122, 120 + y, 12, 1, '#1f3310');
+                drawRect(ctx, x, 155 + y, 8, 1, '#1f3310');
             }
             ctx.globalAlpha = 1;
 
             // 卫衣中间高光（圆柱体感）
-            for(let y = 0; y < 90; y++) {
-                const width = 14 - Math.abs(y - 45) * 0.1;
-                const x = 100 - width / 2;
-                ctx.globalAlpha = 0.4;
-                drawRect(ctx, x, 125 + y, width, 1, '#35611c');
+            for(let y = 0; y < 100; y++) {
+                const width = 18 - Math.abs(y - 50) * 0.2;
+                const x = 120 - width / 2;
+                ctx.globalAlpha = 0.3;
+                drawRect(ctx, x, 160 + y, width, 1, '#35611c');
             }
             ctx.globalAlpha = 1;
 
-            // === 卫衣上的血迹（更自然的形状）===
-            // 左胸大块血迹
-            drawEllipse(ctx, 78, 145, 8, 12, '#5a1a1a');
-            drawEllipse(ctx, 80, 148, 6, 10, '#4a1010');
-            drawEllipse(ctx, 78, 150, 5, 8, '#3d0d0d');
+            // === 卫衣上的血迹（更真实） ===
+            // 左胸大块血迹（像是被溅到的）
+            const blood1X = 90, blood1Y = 175;
+            drawEllipse(ctx, blood1X, blood1Y, 12, 16, '#6a1a1a');
+            drawEllipse(ctx, blood1X + 2, blood1Y + 2, 10, 14, '#5a1515');
+            drawEllipse(ctx, blood1X + 3, blood1Y + 3, 8, 12, '#4a1010');
+            drawEllipse(ctx, blood1X + 4, blood1Y + 4, 6, 10, '#3d0d0d');
 
-            // 血液流淌
-            for(let i = 0; i < 20; i++) {
-                const y = 158 + i;
-                const width = 2 - i * 0.05;
-                const x = 79 + Math.sin(i * 0.5) * 1;
-                ctx.globalAlpha = Math.max(0.3, 1 - i * 0.04);
-                drawRect(ctx, x, y, Math.max(1, width), 1, '#3d0d0d');
+            // 血液向下流淌
+            let flowX = blood1X + 4;
+            let flowY = blood1Y + 14;
+            for(let i = 0; i < 30; i++) {
+                const width = Math.max(1, 3 - i * 0.08);
+                flowX += Math.sin(i * 0.4) * 0.5;
+                flowY += 1;
+                ctx.globalAlpha = Math.max(0.3, 1 - i * 0.025);
+                drawRect(ctx, flowX, flowY, width, 1, '#3d0d0d');
             }
             ctx.globalAlpha = 1;
 
             // 右侧溅射血迹
-            drawEllipse(ctx, 115, 138, 5, 4, '#5a1a1a');
-            drawEllipse(ctx, 118, 140, 4, 3, '#4a1010');
-            drawEllipse(ctx, 120, 136, 2, 2, '#4a1010');
-            drawEllipse(ctx, 112, 143, 3, 3, '#3d0d0d');
+            const splatter = [
+                {x: 145, y: 168, r: 6},
+                {x: 152, y: 172, r: 4},
+                {x: 148, y: 178, r: 3},
+                {x: 156, y: 165, r: 2.5},
+                {x: 150, y: 183, r: 2}
+            ];
+
+            splatter.forEach(s => {
+                drawCircle(ctx, s.x, s.y, s.r, '#5a1515');
+                drawCircle(ctx, s.x, s.y, s.r * 0.7, '#4a1010');
+            });
 
             // 中下部血迹
-            drawEllipse(ctx, 95, 175, 7, 9, '#5a1a1a');
-            drawEllipse(ctx, 96, 177, 5, 7, '#4a1010');
-            drawEllipse(ctx, 95, 179, 4, 5, '#3d0d0d');
+            drawEllipse(ctx, 115, 220, 10, 12, '#5a1515');
+            drawEllipse(ctx, 116, 222, 8, 10, '#4a1010');
+            drawEllipse(ctx, 117, 224, 6, 8, '#3d0d0d');
 
             // 小血滴
-            drawCircle(ctx, 88, 190, 1.5, '#3d0d0d');
-            drawCircle(ctx, 105, 185, 1, '#4a1010');
-            drawCircle(ctx, 118, 175, 1.5, '#3d0d0d');
+            drawCircle(ctx, 105, 238, 2, '#3d0d0d');
+            drawCircle(ctx, 125, 245, 1.5, '#4a1010');
+            drawCircle(ctx, 140, 232, 2, '#3d0d0d');
 
-            // === 绳子（绑在背后，两侧可见）===
+            // === 绳子（绑在背后） ===
             // 左侧绳子
-            for(let y = 0; y < 35; y++) {
-                const x = 62 + Math.sin(y * 0.3) * 1;
-                drawRect(ctx, x, 135 + y, 4, 1, '#4a3828');
-                drawRect(ctx, x + 1, 135 + y, 2, 1, '#5a4838');
+            for(let y = 0; y < 50; y++) {
+                const x = 65 + Math.sin(y * 0.2) * 2;
+                const width = 5 + Math.sin(y * 0.5) * 1;
+                drawRect(ctx, x, 180 + y, width, 1, '#4a3828');
+                drawRect(ctx, x + 1, 180 + y, width - 2, 1, '#5a4838');
             }
 
             // 右侧绳子
-            for(let y = 0; y < 35; y++) {
-                const x = 134 + Math.sin(y * 0.3) * 1;
-                drawRect(ctx, x, 135 + y, 4, 1, '#4a3828');
-                drawRect(ctx, x + 1, 135 + y, 2, 1, '#5a4838');
+            for(let y = 0; y < 50; y++) {
+                const x = 170 + Math.sin(y * 0.2) * 2;
+                const width = 5 + Math.sin(y * 0.5) * 1;
+                drawRect(ctx, x, 180 + y, width, 1, '#4a3828');
+                drawRect(ctx, x + 1, 180 + y, width - 2, 1, '#5a4838');
             }
         }
 
@@ -365,122 +486,116 @@
             ctx.imageSmoothingEnabled = false;
 
             // 枪管
-            drawRect(ctx, 25, 20, 30, 10, '#0d0d0d');
-            drawRect(ctx, 26, 21, 28, 8, '#1a1a1a');
-            drawRect(ctx, 25, 22, 2, 6, '#000000');
+            drawRect(ctx, 30, 24, 35, 12, '#0d0d0d');
+            drawRect(ctx, 31, 25, 33, 10, '#1a1a1a');
+            drawRect(ctx, 30, 26, 3, 8, '#000000');
 
             // 弹仓
-            drawCircle(ctx, 58, 25, 8, '#1a1a1a');
-            drawCircle(ctx, 58, 25, 6, '#2a2a2a');
+            drawCircle(ctx, 68, 30, 10, '#1a1a1a');
+            drawCircle(ctx, 68, 30, 8, '#2a2a2a');
 
             // 弹仓孔
             for(let i = 0; i < 6; i++) {
                 const angle = (i / 6) * Math.PI * 2;
-                const x = 58 + Math.cos(angle) * 3;
-                const y = 25 + Math.sin(angle) * 3;
-                drawCircle(ctx, x, y, 1, '#0d0d0d');
+                const x = 68 + Math.cos(angle) * 4;
+                const y = 30 + Math.sin(angle) * 4;
+                drawCircle(ctx, x, y, 1.5, '#0d0d0d');
             }
 
             // 扳机护圈
-            drawRect(ctx, 58, 30, 10, 2, '#2a2a2a');
-            drawRect(ctx, 58, 30, 2, 8, '#2a2a2a');
-            drawRect(ctx, 66, 30, 2, 8, '#2a2a2a');
+            ctx.strokeStyle = '#2a2a2a';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(72, 38, 8, 0, Math.PI);
+            ctx.stroke();
 
             // 扳机
-            drawRect(ctx, 61, 33, 4, 5, '#3a3a3a');
+            drawRect(ctx, 70, 38, 5, 6, '#3a3a3a');
 
             // 握把
-            for(let i = 0; i < 8; i++) {
-                const width = 12 - i * 1.2;
-                drawRect(ctx, 63, 35 + i * 2, width, 2, '#1a1a1a');
+            for(let i = 0; i < 10; i++) {
+                const width = 14 - i * 1.1;
+                drawRect(ctx, 74, 42 + i * 2.5, width, 2, '#1a1a1a');
             }
 
             // 握把纹理
-            for(let i = 0; i < 6; i++) {
-                drawRect(ctx, 65, 37 + i * 2, 6, 1, '#2a2a2a');
+            for(let i = 0; i < 8; i++) {
+                drawRect(ctx, 76, 44 + i * 2.5, 8, 1, '#2a2a2a');
             }
 
             // 高光
-            drawRect(ctx, 27, 22, 10, 1, '#3a3a3a');
-            drawCircle(ctx, 56, 23, 2, '#3a3a3a');
+            drawRect(ctx, 32, 26, 12, 1, '#3a3a3a');
+            drawCircle(ctx, 66, 28, 2, '#3a3a3a');
         }
 
-        // ===== 绘制玩家左手（在桌面上）=====
+        // ===== 绘制玩家左手（第一人称视角，从屏幕底部伸出）=====
         function drawLeftHand() {
             const canvas = document.getElementById('leftHand');
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 手臂（渐变淡化，但较短因为手在桌上）
-            for(let y = 0; y < 80; y++) {
-                const alpha = Math.min(1, y / 50);
+            // 手臂（从屏幕底部伸出，渐变淡化）
+            for(let y = 0; y < 200; y++) {
+                const alpha = Math.min(1, y / 120);
                 const r = 139, g = 125, b = 107;
                 ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                const width = 32 + y * 0.1;
-                const x = 70 - width / 2;
+                const width = 45 + y * 0.15;
+                const x = 80 - width / 2;
                 drawRect(ctx, x, y, width, 1);
 
                 // 手臂阴影
                 if(alpha > 0.3) {
-                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha * 0.6})`;
-                    drawRect(ctx, x, y, 6, 1);
+                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha * 0.5})`;
+                    drawRect(ctx, x, y, 8, 1);
                 }
             }
 
             // 手腕
-            drawEllipse(ctx, 70, 95, 20, 12, '#8b7d6b');
-            drawEllipse(ctx, 70, 96, 18, 10, '#9a8a75');
-
-            // 手腕阴影
-            drawEllipse(ctx, 70, 92, 18, 8, '#7a6d5f');
+            drawEllipse(ctx, 80, 210, 24, 15, '#8b7d6b');
+            drawEllipse(ctx, 80, 212, 22, 13, '#9a8a75');
+            drawEllipse(ctx, 80, 207, 22, 12, '#7a6d5f');
 
             // === 铁链（圆环形连接）===
-            // 绘制链环
             function drawChainLink(x, y, size, alpha = 1) {
                 ctx.globalAlpha = alpha;
-                // 外圈
                 ctx.strokeStyle = '#4a4a4a';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 4;
                 ctx.beginPath();
-                ctx.ellipse(x, y, size, size * 0.7, 0, 0, Math.PI * 2);
+                ctx.ellipse(x, y, size, size * 0.65, 0, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // 内圈（亮部）
                 ctx.strokeStyle = '#5a5a5a';
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.ellipse(x, y, size - 1, size * 0.7 - 1, 0, 0, Math.PI * 2);
+                ctx.ellipse(x, y, size - 1.5, size * 0.65 - 1.5, 0, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // 高光
                 ctx.strokeStyle = '#6a6a6a';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.ellipse(x - 1, y - 1, size - 2, size * 0.7 - 2, 0, Math.PI * 1.2, Math.PI * 1.8);
+                ctx.ellipse(x - 1, y - 1, size - 2, size * 0.65 - 2, 0, Math.PI * 1.2, Math.PI * 1.8);
                 ctx.stroke();
 
                 ctx.globalAlpha = 1;
             }
 
-            // 手腕上的主链环
-            drawChainLink(70, 95, 8, 1);
-
-            // 延伸的链环（一个套一个）
-            drawChainLink(82, 95, 7, 0.95);
-            drawChainLink(93, 95, 6.5, 0.85);
-            drawChainLink(103, 95, 6, 0.7);
-            drawChainLink(112, 95, 5.5, 0.5);
-            drawChainLink(120, 95, 5, 0.3);
+            // 手腕上的链环
+            drawChainLink(80, 210, 10, 1);
+            drawChainLink(94, 210, 9, 0.95);
+            drawChainLink(107, 210, 8.5, 0.85);
+            drawChainLink(119, 210, 8, 0.7);
+            drawChainLink(130, 210, 7.5, 0.5);
+            drawChainLink(140, 210, 7, 0.3);
 
             // 手掌
-            drawEllipse(ctx, 70, 135, 22, 28, '#8b7d6b');
-            drawEllipse(ctx, 70, 136, 20, 26, '#9a8a75');
+            drawEllipse(ctx, 80, 255, 26, 32, '#8b7d6b');
+            drawEllipse(ctx, 80, 256, 24, 30, '#9a8a75');
 
             // 手掌阴影
-            for(let i = 0; i < 10; i++) {
-                ctx.globalAlpha = 0.3 - i * 0.02;
-                drawEllipse(ctx, 68, 130, 20 - i * 0.5, 26 - i * 0.5, '#7a6d5f');
+            for(let i = 0; i < 12; i++) {
+                ctx.globalAlpha = 0.35 - i * 0.025;
+                drawEllipse(ctx, 78, 248, 24 - i * 0.6, 30 - i * 0.6, '#7a6d5f');
             }
             ctx.globalAlpha = 1;
 
@@ -488,135 +603,130 @@
             ctx.strokeStyle = '#8a7a68';
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(55, 143);
-            ctx.quadraticCurveTo(70, 145, 85, 143);
+            ctx.moveTo(60, 265);
+            ctx.quadraticCurveTo(80, 268, 100, 265);
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.moveTo(58, 152);
-            ctx.quadraticCurveTo(70, 154, 82, 152);
+            ctx.moveTo(63, 275);
+            ctx.quadraticCurveTo(80, 278, 97, 275);
             ctx.stroke();
 
-            // === 拇指（有机形状）===
-            drawEllipse(ctx, 45, 145, 8, 14, '#8b7d6b');
-            drawEllipse(ctx, 45, 145, 7, 12, '#9a8a75');
-            drawEllipse(ctx, 44, 142, 6, 10, '#7a6d5f');
+            // 拇指
+            drawEllipse(ctx, 50, 265, 10, 16, '#8b7d6b');
+            drawEllipse(ctx, 50, 265, 9, 14, '#9a8a75');
+            drawEllipse(ctx, 49, 261, 8, 12, '#7a6d5f');
+            drawRect(ctx, 46, 271, 8, 1, '#8a7a68');
 
-            // 拇指关节
-            drawRect(ctx, 42, 148, 6, 1, '#8a7a68');
-
-            // === 手指（圆润有机）===
+            // 手指（圆润有机）
             // 食指
-            for(let i = 0; i < 40; i++) {
-                const width = 6 - i * 0.05;
-                const y = 163 + i;
-                drawEllipse(ctx, 57, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 50; i++) {
+                const width = 7 - i * 0.06;
+                const y = 287 + i;
+                drawEllipse(ctx, 63, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 57, 165, 3, 20, '#9a8a75');
-            drawRect(ctx, 55, 178, 4, 1, '#8a7a68');
-            drawRect(ctx, 55, 191, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 63, 290, 3.5, 25, '#9a8a75');
+            drawRect(ctx, 60, 305, 6, 1, '#8a7a68');
+            drawRect(ctx, 60, 320, 6, 1, '#8a7a68');
 
             // 中指
-            for(let i = 0; i < 45; i++) {
-                const width = 6 - i * 0.04;
-                const y = 163 + i;
-                drawEllipse(ctx, 70, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 55; i++) {
+                const width = 7 - i * 0.05;
+                const y = 287 + i;
+                drawEllipse(ctx, 80, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 70, 165, 3, 22, '#9a8a75');
-            drawRect(ctx, 68, 180, 4, 1, '#8a7a68');
-            drawRect(ctx, 68, 195, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 80, 290, 3.5, 27, '#9a8a75');
+            drawRect(ctx, 77, 308, 6, 1, '#8a7a68');
+            drawRect(ctx, 77, 325, 6, 1, '#8a7a68');
 
             // 无名指
-            for(let i = 0; i < 40; i++) {
-                const width = 6 - i * 0.05;
-                const y = 163 + i;
-                drawEllipse(ctx, 83, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 50; i++) {
+                const width = 7 - i * 0.06;
+                const y = 287 + i;
+                drawEllipse(ctx, 97, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 83, 165, 3, 20, '#9a8a75');
-            drawRect(ctx, 81, 178, 4, 1, '#8a7a68');
-            drawRect(ctx, 81, 191, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 97, 290, 3.5, 25, '#9a8a75');
+            drawRect(ctx, 94, 305, 6, 1, '#8a7a68');
+            drawRect(ctx, 94, 320, 6, 1, '#8a7a68');
 
             // 小指
-            for(let i = 0; i < 35; i++) {
-                const width = 5 - i * 0.05;
-                const y = 163 + i;
-                drawEllipse(ctx, 94, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 43; i++) {
+                const width = 6 - i * 0.06;
+                const y = 287 + i;
+                drawEllipse(ctx, 112, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 94, 165, 2.5, 17, '#9a8a75');
-            drawRect(ctx, 92, 175, 4, 1, '#8a7a68');
-            drawRect(ctx, 92, 186, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 112, 290, 3, 21, '#9a8a75');
+            drawRect(ctx, 109, 301, 6, 1, '#8a7a68');
+            drawRect(ctx, 109, 315, 6, 1, '#8a7a68');
         }
 
-        // ===== 绘制玩家右手（在桌面上）=====
+        // ===== 绘制玩家右手（第一人称视角）=====
         function drawRightHand() {
             const canvas = document.getElementById('rightHand');
             const ctx = canvas.getContext('2d');
             ctx.imageSmoothingEnabled = false;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 手臂（渐变淡化）
-            for(let y = 0; y < 80; y++) {
-                const alpha = Math.min(1, y / 50);
+            // 手臂（从屏幕底部伸出，渐变淡化）
+            for(let y = 0; y < 200; y++) {
+                const alpha = Math.min(1, y / 120);
                 const r = 139, g = 125, b = 107;
                 ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                const width = 32 + y * 0.1;
-                const x = 110 - width / 2;
+                const width = 45 + y * 0.15;
+                const x = 140 - width / 2;
                 drawRect(ctx, x, y, width, 1);
 
                 // 手臂阴影
                 if(alpha > 0.3) {
-                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha * 0.6})`;
-                    drawRect(ctx, x + width - 6, y, 6, 1);
+                    ctx.fillStyle = `rgba(${r-20}, ${g-20}, ${b-20}, ${alpha * 0.5})`;
+                    drawRect(ctx, x + width - 8, y, 8, 1);
                 }
             }
 
             // 手腕
-            drawEllipse(ctx, 110, 95, 20, 12, '#8b7d6b');
-            drawEllipse(ctx, 110, 96, 18, 10, '#9a8a75');
-            drawEllipse(ctx, 110, 92, 18, 8, '#7a6d5f');
+            drawEllipse(ctx, 140, 210, 24, 15, '#8b7d6b');
+            drawEllipse(ctx, 140, 212, 22, 13, '#9a8a75');
+            drawEllipse(ctx, 140, 207, 22, 12, '#7a6d5f');
 
-            // === 铁链（圆环形连接）===
+            // 铁链
             function drawChainLink(x, y, size, alpha = 1) {
                 ctx.globalAlpha = alpha;
                 ctx.strokeStyle = '#4a4a4a';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 4;
                 ctx.beginPath();
-                ctx.ellipse(x, y, size, size * 0.7, 0, 0, Math.PI * 2);
+                ctx.ellipse(x, y, size, size * 0.65, 0, 0, Math.PI * 2);
                 ctx.stroke();
 
                 ctx.strokeStyle = '#5a5a5a';
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.ellipse(x, y, size - 1, size * 0.7 - 1, 0, 0, Math.PI * 2);
+                ctx.ellipse(x, y, size - 1.5, size * 0.65 - 1.5, 0, 0, Math.PI * 2);
                 ctx.stroke();
 
                 ctx.strokeStyle = '#6a6a6a';
                 ctx.lineWidth = 1;
                 ctx.beginPath();
-                ctx.ellipse(x - 1, y - 1, size - 2, size * 0.7 - 2, 0, Math.PI * 1.2, Math.PI * 1.8);
+                ctx.ellipse(x - 1, y - 1, size - 2, size * 0.65 - 2, 0, Math.PI * 1.2, Math.PI * 1.8);
                 ctx.stroke();
 
                 ctx.globalAlpha = 1;
             }
 
-            // 手腕上的主链环
-            drawChainLink(110, 95, 8, 1);
-
-            // 延伸的链环
-            drawChainLink(98, 95, 7, 0.95);
-            drawChainLink(87, 95, 6.5, 0.85);
-            drawChainLink(77, 95, 6, 0.7);
-            drawChainLink(68, 95, 5.5, 0.5);
-            drawChainLink(60, 95, 5, 0.3);
+            drawChainLink(140, 210, 10, 1);
+            drawChainLink(126, 210, 9, 0.95);
+            drawChainLink(113, 210, 8.5, 0.85);
+            drawChainLink(101, 210, 8, 0.7);
+            drawChainLink(90, 210, 7.5, 0.5);
+            drawChainLink(80, 210, 7, 0.3);
 
             // 手掌
-            drawEllipse(ctx, 110, 135, 22, 28, '#8b7d6b');
-            drawEllipse(ctx, 110, 136, 20, 26, '#9a8a75');
+            drawEllipse(ctx, 140, 255, 26, 32, '#8b7d6b');
+            drawEllipse(ctx, 140, 256, 24, 30, '#9a8a75');
 
             // 手掌阴影
-            for(let i = 0; i < 10; i++) {
-                ctx.globalAlpha = 0.3 - i * 0.02;
-                drawEllipse(ctx, 112, 130, 20 - i * 0.5, 26 - i * 0.5, '#7a6d5f');
+            for(let i = 0; i < 12; i++) {
+                ctx.globalAlpha = 0.35 - i * 0.025;
+                drawEllipse(ctx, 142, 248, 24 - i * 0.6, 30 - i * 0.6, '#7a6d5f');
             }
             ctx.globalAlpha = 1;
 
@@ -624,61 +734,61 @@
             ctx.strokeStyle = '#8a7a68';
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(95, 143);
-            ctx.quadraticCurveTo(110, 145, 125, 143);
+            ctx.moveTo(120, 265);
+            ctx.quadraticCurveTo(140, 268, 160, 265);
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.moveTo(98, 152);
-            ctx.quadraticCurveTo(110, 154, 122, 152);
+            ctx.moveTo(123, 275);
+            ctx.quadraticCurveTo(140, 278, 157, 275);
             ctx.stroke();
 
             // 拇指（右手在右侧）
-            drawEllipse(ctx, 135, 145, 8, 14, '#8b7d6b');
-            drawEllipse(ctx, 135, 145, 7, 12, '#9a8a75');
-            drawEllipse(ctx, 136, 142, 6, 10, '#7a6d5f');
-            drawRect(ctx, 132, 148, 6, 1, '#8a7a68');
+            drawEllipse(ctx, 170, 265, 10, 16, '#8b7d6b');
+            drawEllipse(ctx, 170, 265, 9, 14, '#9a8a75');
+            drawEllipse(ctx, 171, 261, 8, 12, '#7a6d5f');
+            drawRect(ctx, 166, 271, 8, 1, '#8a7a68');
 
             // 手指
             // 小指
-            for(let i = 0; i < 35; i++) {
-                const width = 5 - i * 0.05;
-                const y = 163 + i;
-                drawEllipse(ctx, 86, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 43; i++) {
+                const width = 6 - i * 0.06;
+                const y = 287 + i;
+                drawEllipse(ctx, 108, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 86, 165, 2.5, 17, '#9a8a75');
-            drawRect(ctx, 84, 175, 4, 1, '#8a7a68');
-            drawRect(ctx, 84, 186, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 108, 290, 3, 21, '#9a8a75');
+            drawRect(ctx, 105, 301, 6, 1, '#8a7a68');
+            drawRect(ctx, 105, 315, 6, 1, '#8a7a68');
 
             // 无名指
-            for(let i = 0; i < 40; i++) {
-                const width = 6 - i * 0.05;
-                const y = 163 + i;
-                drawEllipse(ctx, 97, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 50; i++) {
+                const width = 7 - i * 0.06;
+                const y = 287 + i;
+                drawEllipse(ctx, 123, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 97, 165, 3, 20, '#9a8a75');
-            drawRect(ctx, 95, 178, 4, 1, '#8a7a68');
-            drawRect(ctx, 95, 191, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 123, 290, 3.5, 25, '#9a8a75');
+            drawRect(ctx, 120, 305, 6, 1, '#8a7a68');
+            drawRect(ctx, 120, 320, 6, 1, '#8a7a68');
 
             // 中指
-            for(let i = 0; i < 45; i++) {
-                const width = 6 - i * 0.04;
-                const y = 163 + i;
-                drawEllipse(ctx, 110, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 55; i++) {
+                const width = 7 - i * 0.05;
+                const y = 287 + i;
+                drawEllipse(ctx, 140, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 110, 165, 3, 22, '#9a8a75');
-            drawRect(ctx, 108, 180, 4, 1, '#8a7a68');
-            drawRect(ctx, 108, 195, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 140, 290, 3.5, 27, '#9a8a75');
+            drawRect(ctx, 137, 308, 6, 1, '#8a7a68');
+            drawRect(ctx, 137, 325, 6, 1, '#8a7a68');
 
             // 食指
-            for(let i = 0; i < 40; i++) {
-                const width = 6 - i * 0.05;
-                const y = 163 + i;
-                drawEllipse(ctx, 123, y, width / 2, 0.5, '#8b7d6b');
+            for(let i = 0; i < 50; i++) {
+                const width = 7 - i * 0.06;
+                const y = 287 + i;
+                drawEllipse(ctx, 157, y, width / 2, 0.6, '#8b7d6b');
             }
-            drawEllipse(ctx, 123, 165, 3, 20, '#9a8a75');
-            drawRect(ctx, 121, 178, 4, 1, '#8a7a68');
-            drawRect(ctx, 121, 191, 4, 1, '#8a7a68');
+            drawEllipse(ctx, 157, 290, 3.5, 25, '#9a8a75');
+            drawRect(ctx, 154, 305, 6, 1, '#8a7a68');
+            drawRect(ctx, 154, 320, 6, 1, '#8a7a68');
         }
 
         // 初始化绘制所有元素
