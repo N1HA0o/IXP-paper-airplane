@@ -40,7 +40,7 @@
                 translateY(-50%)
                 translateZ(-1200px)
                 rotateX(65deg);
-            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .ground {
@@ -71,11 +71,11 @@
                 translateY(-50%)
                 rotateX(-65deg);
             cursor: pointer;
-            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 2.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 基础白纸 */
-        .paper {
+        /* 基础纸张 */
+        .base-paper {
             position: absolute;
             width: 100%;
             height: 100%;
@@ -83,119 +83,215 @@
             box-shadow:
                 0 20px 50px rgba(0, 0, 0, 0.2),
                 0 8px 20px rgba(0, 0, 0, 0.15);
-            transition: opacity 0.8s ease-out;
+            transition: opacity 0.5s ease-out;
         }
 
-        /* 纸飞机 */
+        /* 纸飞机3D模型 */
         .airplane {
             position: absolute;
             width: 100%;
             height: 100%;
             transform-style: preserve-3d;
             opacity: 0;
-            transition: opacity 0.8s ease-out;
+            transition: opacity 0.3s ease-out;
         }
 
         .airplane.visible {
             opacity: 1;
         }
 
-        .plane-body-left {
+        /* 左半部分 */
+        .left-side {
             position: absolute;
             width: 50%;
             height: 100%;
             left: 0;
             top: 0;
-            background: #ffffff;
             transform-origin: right center;
-            transform: rotateY(75deg);
             transform-style: preserve-3d;
-            box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.2);
-            clip-path: polygon(20% 0, 100% 30%, 100% 100%, 0 100%, 0 0);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .plane-body-right {
+        /* 右半部分 */
+        .right-side {
             position: absolute;
             width: 50%;
             height: 100%;
             right: 0;
             top: 0;
-            background: #ffffff;
             transform-origin: left center;
-            transform: rotateY(-75deg);
             transform-style: preserve-3d;
-            box-shadow: -2px 4px 15px rgba(0, 0, 0, 0.2);
-            clip-path: polygon(0 30%, 80% 0, 100% 0, 100% 100%, 0 100%);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .plane-center {
+        /* 左上三角折叠 */
+        .left-triangle {
             position: absolute;
-            width: 30px;
+            width: 100%;
+            height: 50%;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            transform-origin: bottom right;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 右上三角折叠 */
+        .right-triangle {
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            right: 0;
+            top: 0;
+            background: #ffffff;
+            transform-origin: bottom left;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+            box-shadow: -2px 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 左机身 */
+        .left-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            transform-style: preserve-3d;
+            box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 右机身 */
+        .right-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            transform-style: preserve-3d;
+            box-shadow: -2px 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 中央机身 */
+        .center-body {
+            position: absolute;
+            width: 35px;
             height: 100%;
             left: 50%;
             top: 0;
             transform: translateX(-50%);
             background: #ffffff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-        }
-
-        /* 选择按钮 */
-        .choice-buttons {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: none;
-            gap: 40px;
-            z-index: 100;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
             opacity: 0;
             transition: opacity 0.5s ease-out;
         }
 
-        .choice-buttons.visible {
+        /* 选择按钮 - 左侧 */
+        .choice-left {
+            position: fixed;
+            left: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+
+        .choice-left.visible {
             display: flex;
             opacity: 1;
         }
 
-        .choice-btn {
-            padding: 20px 50px;
-            font-size: 24px;
-            font-weight: 600;
-            border: none;
-            border-radius: 15px;
+        .choice-left:hover {
+            transform: translateY(-50%) translateX(-10px);
+        }
+
+        /* 选择按钮 - 右侧 */
+        .choice-right {
+            position: fixed;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+
+        .choice-right.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .choice-right:hover {
+            transform: translateY(-50%) translateX(10px);
+        }
+
+        /* 箭头 */
+        .arrow {
+            width: 60px;
+            height: 60px;
             color: white;
+            font-size: 48px;
+            font-weight: 300;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            animation: float-arrow 2s ease-in-out infinite;
         }
 
-        .choice-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        @keyframes float-arrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-8px); }
         }
 
-        .choice-btn.left {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .choice-right .arrow {
+            animation: float-arrow-right 2s ease-in-out infinite;
         }
 
-        .choice-btn.right {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        @keyframes float-arrow-right {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+
+        /* 选项文字 */
+        .choice-text {
+            color: white;
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 25px;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         /* 白鸽群 */
         .pigeons {
             position: absolute;
-            left: -800px;
+            left: 10%;
             top: 30%;
             transform-style: preserve-3d;
             opacity: 0;
-            transition: all 3s ease-out;
+            transform: scale(0.3) translateZ(-500px);
+            transition: all 4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .pigeons.visible {
             opacity: 1;
-            left: 40%;
+            transform: scale(1.2) translateZ(100px);
+            left: 45%;
         }
 
         .pigeon {
@@ -247,70 +343,160 @@
             50% { transform: rotateZ(30deg); }
         }
 
-        /* 热气球 */
+        /* 热气球 - 精细3D模型 */
         .hot-air-balloon {
             position: absolute;
-            right: -600px;
-            top: 20%;
+            right: 40%;
+            bottom: -500px;
             transform-style: preserve-3d;
             opacity: 0;
-            transition: all 3s ease-out;
+            transition: all 5s cubic-bezier(0.2, 0, 0.2, 1);
         }
 
         .hot-air-balloon.visible {
             opacity: 1;
-            right: 35%;
+            bottom: 30%;
         }
 
-        .balloon-envelope {
+        /* 热气球球体 */
+        .balloon-sphere {
             position: relative;
-            width: 180px;
-            height: 220px;
-            background: linear-gradient(135deg,
-                #ff6b6b 0%,
-                #ff8787 25%,
-                #ffd93d 50%,
-                #6bcf7f 75%,
-                #4d96ff 100%);
-            border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-            animation: float 3s ease-in-out infinite;
+            width: 200px;
+            height: 240px;
+            transform-style: preserve-3d;
+            animation: float-balloon 4s ease-in-out infinite;
         }
 
-        .balloon-basket {
+        @keyframes float-balloon {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-25px) rotateY(5deg); }
+        }
+
+        /* 球体层 - 创建3D立体感 */
+        .balloon-layer {
             position: absolute;
-            width: 60px;
-            height: 50px;
-            background: #8B4513;
-            border-radius: 0 0 10px 10px;
-            left: 50%;
-            top: 100%;
-            transform: translateX(-50%);
-            margin-top: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            height: 100%;
+            border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+            transform-style: preserve-3d;
         }
 
-        .balloon-rope {
+        .balloon-layer-1 {
+            background: linear-gradient(135deg,
+                #ff6b6b 0%, #ff8787 20%,
+                #ffd93d 40%, #6bcf7f 60%,
+                #4d96ff 80%, #6b5fff 100%);
+            transform: translateZ(30px);
+            box-shadow:
+                inset -10px -20px 30px rgba(0, 0, 0, 0.2),
+                inset 10px 10px 20px rgba(255, 255, 255, 0.3),
+                0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .balloon-layer-2 {
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.1) 100%);
+            transform: translateZ(35px);
+        }
+
+        /* 球体纹理条 */
+        .balloon-stripe {
+            position: absolute;
+            width: 100%;
+            height: 15%;
+            left: 0;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            transform-style: preserve-3d;
+        }
+
+        .balloon-stripe:nth-child(1) { top: 20%; }
+        .balloon-stripe:nth-child(2) { top: 40%; }
+        .balloon-stripe:nth-child(3) { top: 60%; }
+
+        /* 绳索连接 */
+        .balloon-ropes {
+            position: absolute;
+            width: 100%;
+            height: 80px;
+            top: 100%;
+            left: 0;
+            transform-style: preserve-3d;
+        }
+
+        .rope {
             position: absolute;
             width: 2px;
-            height: 25px;
-            background: #654321;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                #654321 0%,
+                #8B4513 50%,
+                #654321 100%);
+            transform-origin: top center;
+            box-shadow: 1px 0 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .rope:nth-child(1) {
+            left: 30%;
+            transform: rotateZ(-3deg);
+        }
+
+        .rope:nth-child(2) {
             left: 50%;
-            top: 100%;
             transform: translateX(-50%);
         }
 
-        .balloon-rope:nth-child(2) {
-            left: 30%;
+        .rope:nth-child(3) {
+            right: 30%;
+            transform: rotateZ(3deg);
         }
 
-        .balloon-rope:nth-child(3) {
-            left: 70%;
+        /* 篮子 */
+        .balloon-basket {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+            margin-top: 80px;
+            background: linear-gradient(135deg,
+                #8B4513 0%,
+                #A0522D 50%,
+                #654321 100%);
+            border-radius: 0 0 12px 12px;
+            box-shadow:
+                inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+                inset -2px -2px 5px rgba(0, 0, 0, 0.3),
+                0 10px 25px rgba(0, 0, 0, 0.4);
+            transform-style: preserve-3d;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        /* 篮子编织纹理 */
+        .basket-weave {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 0, 0, 0.2);
+            left: 0;
+        }
+
+        .basket-weave:nth-child(1) { top: 20%; }
+        .basket-weave:nth-child(2) { top: 40%; }
+        .basket-weave:nth-child(3) { top: 60%; }
+        .basket-weave:nth-child(4) { top: 80%; }
+
+        /* 篮子边缘 */
+        .basket-rim {
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            top: -4px;
+            background: #654321;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
         /* 提示文字 */
@@ -319,13 +505,19 @@
             bottom: 60px;
             left: 50%;
             transform: translateX(-50%);
-            color: #333;
-            font-size: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 2px;
             text-align: center;
             opacity: 0.9;
             pointer-events: none;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
             transition: opacity 0.5s;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 15px 35px;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
         }
 
         /* 场景描述 */
@@ -334,15 +526,21 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #333;
-            font-size: 28px;
-            font-weight: 600;
+            color: white;
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 3px;
             text-align: center;
             opacity: 0;
             pointer-events: none;
-            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9);
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             transition: opacity 1s ease-out;
             z-index: 50;
+            max-width: 80%;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px 45px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
         }
 
         .scene-description.visible {
@@ -354,55 +552,87 @@
     <div class="hint" id="hint">点击白纸，开始纸飞机的旅程</div>
     <div class="scene-description" id="sceneDesc"></div>
 
-    <div class="choice-buttons" id="choiceButtons">
-        <button class="choice-btn left" id="flyLeft">← 向左飞</button>
-        <button class="choice-btn right" id="flyRight">向右飞 →</button>
+    <!-- 左侧选项 -->
+    <div class="choice-left" id="choiceLeft">
+        <div class="arrow">←</div>
+        <div class="choice-text">向左飞</div>
+    </div>
+
+    <!-- 右侧选项 -->
+    <div class="choice-right" id="choiceRight">
+        <div class="arrow">→</div>
+        <div class="choice-text">向右飞</div>
     </div>
 
     <div class="scene" id="scene">
         <div class="world" id="world">
             <div class="ground">
-                <!-- 白纸和纸飞机 -->
+                <!-- 纸张和纸飞机 -->
                 <div class="paper-container" id="paperContainer">
-                    <div class="paper" id="paper"></div>
+                    <div class="base-paper" id="basePaper"></div>
+
                     <div class="airplane" id="airplane">
-                        <div class="plane-body-left"></div>
-                        <div class="plane-body-right"></div>
-                        <div class="plane-center"></div>
+                        <div class="left-side" id="leftSide">
+                            <div class="left-triangle" id="leftTriangle"></div>
+                            <div class="left-body"></div>
+                        </div>
+
+                        <div class="right-side" id="rightSide">
+                            <div class="right-triangle" id="rightTriangle"></div>
+                            <div class="right-body"></div>
+                        </div>
+
+                        <div class="center-body" id="centerBody"></div>
                     </div>
                 </div>
 
                 <!-- 白鸽群 -->
-                <div class="pigeons" id="pigeons">
-                    <!-- 动态生成多只白鸽 -->
-                </div>
+                <div class="pigeons" id="pigeons"></div>
 
                 <!-- 热气球 -->
                 <div class="hot-air-balloon" id="balloon">
-                    <div class="balloon-envelope">
-                        <div class="balloon-rope"></div>
-                        <div class="balloon-rope"></div>
-                        <div class="balloon-rope"></div>
+                    <div class="balloon-sphere">
+                        <div class="balloon-layer balloon-layer-1">
+                            <div class="balloon-stripe"></div>
+                            <div class="balloon-stripe"></div>
+                            <div class="balloon-stripe"></div>
+                        </div>
+                        <div class="balloon-layer balloon-layer-2"></div>
                     </div>
-                    <div class="balloon-basket"></div>
+                    <div class="balloon-ropes">
+                        <div class="rope"></div>
+                        <div class="rope"></div>
+                        <div class="rope"></div>
+                    </div>
+                    <div class="balloon-basket">
+                        <div class="basket-rim"></div>
+                        <div class="basket-weave"></div>
+                        <div class="basket-weave"></div>
+                        <div class="basket-weave"></div>
+                        <div class="basket-weave"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let gameState = 'initial'; // initial, folded, flying
+        let gameState = 'initial'; // initial, folding, folded, flying
 
         const el = {
             scene: document.getElementById('scene'),
             world: document.getElementById('world'),
             container: document.getElementById('paperContainer'),
-            paper: document.getElementById('paper'),
+            basePaper: document.getElementById('basePaper'),
             airplane: document.getElementById('airplane'),
+            leftSide: document.getElementById('leftSide'),
+            rightSide: document.getElementById('rightSide'),
+            leftTriangle: document.getElementById('leftTriangle'),
+            rightTriangle: document.getElementById('rightTriangle'),
+            centerBody: document.getElementById('centerBody'),
             hint: document.getElementById('hint'),
-            choiceButtons: document.getElementById('choiceButtons'),
-            flyLeft: document.getElementById('flyLeft'),
-            flyRight: document.getElementById('flyRight'),
+            choiceLeft: document.getElementById('choiceLeft'),
+            choiceRight: document.getElementById('choiceRight'),
             pigeons: document.getElementById('pigeons'),
             balloon: document.getElementById('balloon'),
             sceneDesc: document.getElementById('sceneDesc')
@@ -412,12 +642,13 @@
         function createPigeons() {
             const positions = [
                 { x: 0, y: 0, delay: 0 },
-                { x: 80, y: -30, delay: 0.2 },
-                { x: -70, y: 20, delay: 0.1 },
-                { x: 150, y: 10, delay: 0.3 },
-                { x: -140, y: -20, delay: 0.15 },
-                { x: 60, y: 60, delay: 0.25 },
-                { x: -50, y: -60, delay: 0.05 }
+                { x: 90, y: -40, delay: 0.2 },
+                { x: -80, y: 25, delay: 0.1 },
+                { x: 170, y: 15, delay: 0.3 },
+                { x: -160, y: -25, delay: 0.15 },
+                { x: 70, y: 70, delay: 0.25 },
+                { x: -60, y: -70, delay: 0.05 },
+                { x: 130, y: -60, delay: 0.35 }
             ];
 
             positions.forEach(pos => {
@@ -430,36 +661,64 @@
             });
         }
 
-        // 折叠纸飞机
+        // 3D折叠动画序列
         function foldPaper() {
             if (gameState !== 'initial') return;
-            gameState = 'folded';
+            gameState = 'folding';
 
             el.hint.style.opacity = '0';
+            el.container.style.cursor = 'default';
 
-            // 纸张淡出，纸飞机淡入
+            // 显示纸飞机模型
             setTimeout(() => {
-                el.paper.style.opacity = '0';
-                el.airplane.classList.add('visible');
-            }, 200);
+                el.basePaper.style.opacity = '0';
+                el.airplane.style.opacity = '1';
+            }, 300);
+
+            // 步骤1: 左右上角向中线折叠 (0.8s)
+            setTimeout(() => {
+                el.leftTriangle.style.transform = 'rotateX(180deg)';
+                el.rightTriangle.style.transform = 'rotateX(180deg)';
+            }, 500);
+
+            // 步骤2: 左右二次向中线折叠 (1.6s)
+            setTimeout(() => {
+                el.leftSide.style.transform = 'rotateY(20deg)';
+                el.rightSide.style.transform = 'rotateY(-20deg)';
+            }, 1300);
+
+            // 步骤3: 沿中线对折 (2.4s)
+            setTimeout(() => {
+                el.leftSide.style.transform = 'rotateY(85deg)';
+                el.rightSide.style.transform = 'rotateY(-85deg)';
+                el.centerBody.style.opacity = '1';
+            }, 2100);
+
+            // 步骤4: 展开机翼 (3.2s)
+            setTimeout(() => {
+                el.leftSide.style.transform = 'rotateY(70deg)';
+                el.rightSide.style.transform = 'rotateY(-70deg)';
+            }, 2900);
 
             // 视角拉近
             setTimeout(() => {
-                el.scene.style.perspective = '600px';
+                el.scene.style.perspective = '700px';
                 el.world.style.transform = `
                     translateX(-50%)
                     translateY(-50%)
-                    translateZ(-400px)
-                    rotateX(50deg)
+                    translateZ(-500px)
+                    rotateX(55deg)
                 `;
-            }, 800);
+            }, 1500);
 
-            // 显示选择按钮
+            // 完成折叠，显示选项
             setTimeout(() => {
+                gameState = 'folded';
                 el.hint.textContent = '选择纸飞机的飞行方向';
                 el.hint.style.opacity = '0.9';
-                el.choiceButtons.classList.add('visible');
-            }, 2500);
+                el.choiceLeft.classList.add('visible');
+                el.choiceRight.classList.add('visible');
+            }, 3800);
         }
 
         // 向左飞 - 遇见白鸽
@@ -467,38 +726,49 @@
             if (gameState !== 'folded') return;
             gameState = 'flying';
 
-            el.choiceButtons.classList.remove('visible');
+            el.choiceLeft.classList.remove('visible');
+            el.choiceRight.classList.remove('visible');
             el.hint.style.opacity = '0';
 
-            // 纸飞机向左飞行
+            // 纸飞机转向左侧
             el.container.style.transform = `
-                translateX(-150%)
+                translateX(-50%)
                 translateY(-50%)
-                rotateX(-50deg)
-                rotateY(-30deg)
-                rotateZ(-15deg)
-                scale(0.7)
+                rotateX(-55deg)
+                rotateY(-35deg)
+                rotateZ(-20deg)
             `;
 
-            // 镜头跟随并转向左侧
-            el.world.style.transform = `
-                translateX(-30%)
-                translateY(-50%)
-                translateZ(-200px)
-                rotateX(45deg)
-                rotateY(20deg)
-            `;
+            // 镜头跟随纸飞机向左
+            setTimeout(() => {
+                el.world.style.transform = `
+                    translateX(-20%)
+                    translateY(-50%)
+                    translateZ(-300px)
+                    rotateX(50deg)
+                    rotateY(25deg)
+                `;
 
-            // 显示白鸽群
+                el.container.style.transform = `
+                    translateX(-100%)
+                    translateY(-60%)
+                    rotateX(-50deg)
+                    rotateY(-40deg)
+                    rotateZ(-25deg)
+                    scale(0.85)
+                `;
+            }, 800);
+
+            // 白鸽从远处靠近
             setTimeout(() => {
                 el.pigeons.classList.add('visible');
-                el.sceneDesc.textContent = '一群白鸽从远处飞来，与纸飞机一起翱翔';
+                el.sceneDesc.textContent = '一群白鸽从远处飞来，与纸飞机一起翱翔在天空';
                 el.sceneDesc.classList.add('visible');
-            }, 1500);
+            }, 2000);
 
             setTimeout(() => {
                 el.sceneDesc.style.opacity = '0';
-            }, 5000);
+            }, 6500);
         }
 
         // 向右飞 - 遇见热气球
@@ -506,44 +776,55 @@
             if (gameState !== 'folded') return;
             gameState = 'flying';
 
-            el.choiceButtons.classList.remove('visible');
+            el.choiceLeft.classList.remove('visible');
+            el.choiceRight.classList.remove('visible');
             el.hint.style.opacity = '0';
 
-            // 纸飞机向右飞行
+            // 纸飞机转向右侧并俯冲
             el.container.style.transform = `
-                translateX(50%)
-                translateY(-50%)
-                rotateX(-50deg)
-                rotateY(30deg)
-                rotateZ(15deg)
-                scale(0.7)
+                translateX(-50%)
+                translateY(-30%)
+                rotateX(-70deg)
+                rotateY(35deg)
+                rotateZ(20deg)
             `;
 
-            // 镜头跟随并转向右侧
-            el.world.style.transform = `
-                translateX(-70%)
-                translateY(-50%)
-                translateZ(-200px)
-                rotateX(45deg)
-                rotateY(-20deg)
-            `;
+            // 镜头跟随纸飞机向右下
+            setTimeout(() => {
+                el.world.style.transform = `
+                    translateX(-75%)
+                    translateY(-35%)
+                    translateZ(-250px)
+                    rotateX(60deg)
+                    rotateY(-30deg)
+                `;
 
-            // 显示热气球
+                el.container.style.transform = `
+                    translateX(20%)
+                    translateY(-20%)
+                    rotateX(-65deg)
+                    rotateY(40deg)
+                    rotateZ(25deg)
+                    scale(0.8)
+                `;
+            }, 800);
+
+            // 热气球从下方上升
             setTimeout(() => {
                 el.balloon.classList.add('visible');
-                el.sceneDesc.textContent = '一个五彩缤纷的热气球出现在视野中';
+                el.sceneDesc.textContent = '一个五彩缤纷的热气球从下方缓缓升起';
                 el.sceneDesc.classList.add('visible');
-            }, 1500);
+            }, 2000);
 
             setTimeout(() => {
                 el.sceneDesc.style.opacity = '0';
-            }, 5000);
+            }, 6500);
         }
 
         // 事件监听
         el.container.addEventListener('click', foldPaper);
-        el.flyLeft.addEventListener('click', flyLeft);
-        el.flyRight.addEventListener('click', flyRight);
+        el.choiceLeft.addEventListener('click', flyLeft);
+        el.choiceRight.addEventListener('click', flyRight);
 
         // 初始化
         createPigeons();
