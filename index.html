@@ -58,7 +58,6 @@
             position: relative;
         }
 
-        /* 纸张容器 */
         .paper-container {
             position: absolute;
             width: 300px;
@@ -74,7 +73,7 @@
             transition: all 1s ease-out;
         }
 
-        /* 基础纸张 - 会被逐步隐藏 */
+        /* 基础纸张 */
         .base-paper {
             position: absolute;
             width: 100%;
@@ -86,7 +85,21 @@
             transition: opacity 0.5s ease-out;
         }
 
-        /* 纸飞机3D模型容器 */
+        /* 中线 */
+        .center-line {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            background: rgba(180, 180, 180, 0.4);
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 纸飞机容器 */
         .airplane {
             position: absolute;
             width: 100%;
@@ -100,21 +113,8 @@
             opacity: 1;
         }
 
-        /* 机身中心 */
-        .fuselage {
-            position: absolute;
-            width: 40px;
-            height: 100%;
-            left: 50%;
-            top: 0;
-            transform: translateX(-50%);
-            background: #ffffff;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* 左半部分 */
-        .left-half {
+        /* 左半纸张 */
+        .left-side {
             position: absolute;
             width: 50%;
             height: 100%;
@@ -123,11 +123,10 @@
             transform-origin: right center;
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #ffffff;
         }
 
-        /* 右半部分 */
-        .right-half {
+        /* 右半纸张 */
+        .right-side {
             position: absolute;
             width: 50%;
             height: 100%;
@@ -136,14 +135,13 @@
             transform-origin: left center;
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            background: #ffffff;
         }
 
-        /* 左上三角折叠区 */
-        .top-left-fold {
+        /* 左上角折叠区域 */
+        .left-top-triangle {
             position: absolute;
             width: 100%;
-            height: 40%;
+            height: 50%;
             left: 0;
             top: 0;
             background: #ffffff;
@@ -151,14 +149,14 @@
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
             clip-path: polygon(0 0, 100% 0, 100% 100%);
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
         }
 
-        /* 右上三角折叠区 */
-        .top-right-fold {
+        /* 右上角折叠区域 */
+        .right-top-triangle {
             position: absolute;
             width: 100%;
-            height: 40%;
+            height: 50%;
             right: 0;
             top: 0;
             background: #ffffff;
@@ -166,49 +164,46 @@
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
             clip-path: polygon(0 0, 100% 0, 0 100%);
-            box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.15);
         }
 
-        /* 左翼 */
-        .left-wing {
+        /* 左下部分（机身和机翼） */
+        .left-body-wing {
             position: absolute;
             width: 100%;
-            height: 60%;
+            height: 100%;
             left: 0;
             top: 0;
             background: #ffffff;
-            transform-origin: right center;
             transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.18);
+            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* 右翼 */
-        .right-wing {
+        /* 右下部分 */
+        .right-body-wing {
             position: absolute;
             width: 100%;
-            height: 60%;
+            height: 100%;
             right: 0;
             top: 0;
             background: #ffffff;
-            transform-origin: left center;
             transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.18);
+            box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.15);
         }
 
-        /* 中线折痕 */
-        .center-line {
+        /* 机身中心条 */
+        .fuselage {
             position: absolute;
-            width: 2px;
+            width: 30px;
             height: 100%;
             left: 50%;
             top: 0;
-            background: rgba(180, 180, 180, 0.4);
             transform: translateX(-50%);
+            background: #ffffff;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
             opacity: 0;
             transition: opacity 0.5s ease-out;
-            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
         }
 
         /* UI */
@@ -265,16 +260,16 @@
 
                     <!-- 纸飞机模型 -->
                     <div class="airplane" id="airplane">
-                        <!-- 左半部分 -->
-                        <div class="left-half" id="leftHalf">
-                            <div class="top-left-fold" id="topLeftFold"></div>
-                            <div class="left-wing" id="leftWing"></div>
+                        <!-- 左侧 -->
+                        <div class="left-side" id="leftSide">
+                            <div class="left-top-triangle" id="leftTopTriangle"></div>
+                            <div class="left-body-wing" id="leftBodyWing"></div>
                         </div>
 
-                        <!-- 右半部分 -->
-                        <div class="right-half" id="rightHalf">
-                            <div class="top-right-fold" id="topRightFold"></div>
-                            <div class="right-wing" id="rightWing"></div>
+                        <!-- 右侧 -->
+                        <div class="right-side" id="rightSide">
+                            <div class="right-top-triangle" id="rightTopTriangle"></div>
+                            <div class="right-body-wing" id="rightBodyWing"></div>
                         </div>
 
                         <!-- 机身中心 -->
@@ -297,12 +292,12 @@
             basePaper: document.getElementById('basePaper'),
             airplane: document.getElementById('airplane'),
             centerLine: document.getElementById('centerLine'),
-            leftHalf: document.getElementById('leftHalf'),
-            rightHalf: document.getElementById('rightHalf'),
-            topLeftFold: document.getElementById('topLeftFold'),
-            topRightFold: document.getElementById('topRightFold'),
-            leftWing: document.getElementById('leftWing'),
-            rightWing: document.getElementById('rightWing'),
+            leftSide: document.getElementById('leftSide'),
+            rightSide: document.getElementById('rightSide'),
+            leftTopTriangle: document.getElementById('leftTopTriangle'),
+            rightTopTriangle: document.getElementById('rightTopTriangle'),
+            leftBodyWing: document.getElementById('leftBodyWing'),
+            rightBodyWing: document.getElementById('rightBodyWing'),
             fuselage: document.getElementById('fuselage'),
             hint: document.getElementById('hint'),
             stepDisplay: document.getElementById('step')
@@ -358,31 +353,34 @@
                     }, 400);
                     break;
 
-                case 2: // 左上角折向中线
+                case 2: // 左上角向中线折叠
                     el.basePaper.style.opacity = '0.3';
                     el.airplane.classList.add('visible');
-                    el.topLeftFold.style.transform = 'rotateZ(90deg) translateY(-50%)';
+                    // 沿底边向下折叠
+                    el.leftTopTriangle.style.transform = 'rotateX(180deg)';
                     break;
 
-                case 3: // 右上角折向中线
-                    el.topRightFold.style.transform = 'rotateZ(-90deg) translateY(-50%)';
+                case 3: // 右上角向中线折叠
+                    el.rightTopTriangle.style.transform = 'rotateX(180deg)';
                     break;
 
-                case 4: // 左侧再次折向中线
+                case 4: // 左侧再次向中线折叠
                     el.basePaper.style.opacity = '0';
-                    el.leftHalf.style.transform = 'rotateY(0deg)';
-                    el.topLeftFold.style.transform = 'rotateZ(90deg) rotateY(180deg) translateY(-50%)';
+                    // 在已经折叠的基础上，再次向中线折叠
+                    el.leftTopTriangle.style.transform = 'rotateX(180deg) translateZ(5px)';
+                    el.leftBodyWing.style.transform = 'scaleX(0.7)';
                     break;
 
-                case 5: // 右侧再次折向中线
-                    el.rightHalf.style.transform = 'rotateY(0deg)';
-                    el.topRightFold.style.transform = 'rotateZ(-90deg) rotateY(-180deg) translateY(-50%)';
+                case 5: // 右侧再次向中线折叠
+                    el.rightTopTriangle.style.transform = 'rotateX(180deg) translateZ(5px)';
+                    el.rightBodyWing.style.transform = 'scaleX(0.7)';
                     break;
 
                 case 6: // 整体沿中线对折
-                    el.leftHalf.style.transform = 'rotateY(85deg)';
-                    el.rightHalf.style.transform = 'rotateY(-85deg)';
                     el.fuselage.style.opacity = '1';
+                    // 左右两侧向上折叠
+                    el.leftSide.style.transform = 'rotateY(90deg)';
+                    el.rightSide.style.transform = 'rotateY(-90deg)';
                     el.container.style.transform = `
                         translateX(-50%)
                         translateY(-50%)
@@ -392,18 +390,17 @@
                     break;
 
                 case 7: // 展开机翼
-                    el.leftWing.style.transform = 'rotateY(-20deg) translateZ(5px)';
-                    el.rightWing.style.transform = 'rotateY(20deg) translateZ(5px)';
-                    el.leftHalf.style.transform = 'rotateY(0deg)';
-                    el.rightHalf.style.transform = 'rotateY(0deg)';
+                    // 保持对折状态，但稍微展开机翼
+                    el.leftSide.style.transform = 'rotateY(75deg)';
+                    el.rightSide.style.transform = 'rotateY(-75deg)';
 
                     setTimeout(() => {
                         el.container.style.transform = `
                             translateX(-50%)
                             translateY(-50%)
                             rotateX(-50deg)
-                            rotateY(-10deg)
-                            rotateZ(-8deg)
+                            rotateY(-5deg)
+                            rotateZ(-5deg)
                             scale(0.85)
                         `;
                     }, 300);
