@@ -27,11 +27,11 @@
             perspective-origin: 50% 50%;
         }
 
-        /* 超大平面 - 有透视效果，越远越淡 */
+        /* 超大平面 - 向四周无限延伸 */
         .plane {
             position: absolute;
-            width: 3000px;
-            height: 3000px;
+            width: 5000px;
+            height: 5000px;
             left: 50%;
             top: 50%;
             transform-style: preserve-3d;
@@ -42,28 +42,30 @@
                 rotateX(60deg);
         }
 
-        /* 平面表面 - 纯浅蓝色，带渐变淡化 */
+        /* 平面表面 - 从中心向四周淡化 */
         .plane-surface {
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                to top,
-                rgba(173, 216, 230, 1) 0%,     /* 底部（近处）纯浅蓝色 */
-                rgba(173, 216, 230, 0.7) 30%,  /* 中间开始淡化 */
-                rgba(173, 216, 230, 0.4) 60%,  /* 继续淡化 */
-                rgba(173, 216, 230, 0.1) 100%  /* 顶部（远处）几乎透明 */
+            background: radial-gradient(
+                circle at center,
+                rgba(173, 216, 230, 1) 0%,      /* 中心纯浅蓝色 */
+                rgba(173, 216, 230, 0.9) 15%,   /* 靠近中心 */
+                rgba(173, 216, 230, 0.7) 30%,   /* 开始淡化 */
+                rgba(173, 216, 230, 0.4) 50%,   /* 继续淡化 */
+                rgba(173, 216, 230, 0.2) 70%,   /* 更远更淡 */
+                rgba(173, 216, 230, 0) 100%     /* 边缘完全透明 */
             );
             position: relative;
         }
 
-        /* 白纸 */
+        /* 白纸 - 位于平面中心 */
         .paper {
             position: absolute;
             width: 300px;
             height: 400px;
             background: #ffffff; /* 纯白色 */
             left: 50%;
-            top: 60%;
+            top: 50%;
             transform:
                 translateX(-50%)
                 translateY(-50%)
