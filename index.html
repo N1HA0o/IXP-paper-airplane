@@ -25,10 +25,9 @@
             position: relative;
             perspective: 1200px;
             perspective-origin: 50% 50%;
-            transition: perspective 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: perspective 1s ease-out;
         }
 
-        /* 超大平面 - 左右充满屏幕 */
         .plane {
             position: absolute;
             width: 8000px;
@@ -41,7 +40,7 @@
                 translateY(-50%)
                 translateZ(-1200px)
                 rotateX(65deg);
-            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 1s ease-out;
         }
 
         .plane-surface {
@@ -60,10 +59,10 @@
         }
 
         /* 纸张容器 */
-        .paper-wrapper {
+        .paper-container {
             position: absolute;
-            width: 320px;
-            height: 440px;
+            width: 300px;
+            height: 400px;
             left: 50%;
             top: 50%;
             transform-style: preserve-3d;
@@ -72,169 +71,147 @@
                 translateY(-50%)
                 rotateX(-65deg);
             cursor: pointer;
-            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 1s ease-out;
         }
 
-        /* 主纸张 */
-        .paper {
+        /* 基础纸张 - 会被逐步隐藏 */
+        .base-paper {
+            position: absolute;
             width: 100%;
             height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
             background: #ffffff;
             box-shadow:
-                0 25px 60px rgba(0, 0, 0, 0.2),
-                0 10px 25px rgba(0, 0, 0, 0.15),
-                inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+                0 20px 50px rgba(0, 0, 0, 0.2),
+                0 8px 20px rgba(0, 0, 0, 0.15);
+            transition: opacity 0.5s ease-out;
         }
 
-        /* 纸张层次 - 用于创建厚度感 */
-        .paper::before {
-            content: '';
+        /* 纸飞机3D模型容器 */
+        .airplane {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg,
-                rgba(0,0,0,0.03) 0%,
-                transparent 50%,
-                rgba(255,255,255,0.3) 100%);
-            pointer-events: none;
+            transform-style: preserve-3d;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
         }
 
-        /* 中线折痕 */
-        .center-crease {
+        .airplane.visible {
+            opacity: 1;
+        }
+
+        /* 机身中心 */
+        .fuselage {
             position: absolute;
-            width: 1px;
+            width: 40px;
             height: 100%;
             left: 50%;
             top: 0;
-            background: linear-gradient(to bottom,
-                rgba(180, 180, 180, 0) 0%,
-                rgba(180, 180, 180, 0.4) 20%,
-                rgba(180, 180, 180, 0.4) 80%,
-                rgba(180, 180, 180, 0) 100%
-            );
             transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.6s ease-out;
-            box-shadow: 0 0 2px rgba(0,0,0,0.1);
+            background: #ffffff;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         /* 左半部分 */
-        .half-left {
+        .left-half {
             position: absolute;
             width: 50%;
             height: 100%;
+            left: 0;
+            top: 0;
+            transform-origin: right center;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+        }
+
+        /* 右半部分 */
+        .right-half {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+        }
+
+        /* 左上三角折叠区 */
+        .top-left-fold {
+            position: absolute;
+            width: 100%;
+            height: 40%;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            transform-origin: bottom right;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 右上三角折叠区 */
+        .top-right-fold {
+            position: absolute;
+            width: 100%;
+            height: 40%;
+            right: 0;
+            top: 0;
+            background: #ffffff;
+            transform-origin: bottom left;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+            box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 左翼 */
+        .left-wing {
+            position: absolute;
+            width: 100%;
+            height: 60%;
             left: 0;
             top: 0;
             background: #ffffff;
             transform-origin: right center;
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 2px 0 8px rgba(0,0,0,0.08);
+            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.18);
         }
 
-        /* 右半部分 */
-        .half-right {
+        /* 右翼 */
+        .right-wing {
             position: absolute;
-            width: 50%;
-            height: 100%;
+            width: 100%;
+            height: 60%;
             right: 0;
             top: 0;
             background: #ffffff;
             transform-origin: left center;
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+            box-shadow: -2px 4px 12px rgba(0, 0, 0, 0.18);
         }
 
-        /* 左上角三角形区域 */
-        .corner-left {
+        /* 中线折痕 */
+        .center-line {
             position: absolute;
-            width: 50%;
-            height: 35%;
-            left: 0;
-            top: 0;
-            background: #ffffff;
-            transform-origin: right top;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 0);
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.12);
-        }
-
-        /* 右上角三角形区域 */
-        .corner-right {
-            position: absolute;
-            width: 50%;
-            height: 35%;
-            right: 0;
-            top: 0;
-            background: #ffffff;
-            transform-origin: left top;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%);
-            box-shadow: -2px 2px 10px rgba(0,0,0,0.12);
-        }
-
-        /* 左翼 */
-        .wing-left {
-            position: absolute;
-            width: 100%;
+            width: 2px;
             height: 100%;
-            left: 0;
+            left: 50%;
             top: 0;
-            background: #ffffff;
-            transform-origin: bottom center;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* 右翼 */
-        .wing-right {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            right: 0;
-            top: 0;
-            background: #ffffff;
-            transform-origin: bottom center;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* 折痕效果 */
-        .crease {
-            position: absolute;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(150, 150, 150, 0.3) 50%,
-                transparent 100%
-            );
+            background: rgba(180, 180, 180, 0.4);
+            transform: translateX(-50%);
             opacity: 0;
-            transition: opacity 0.6s ease-out;
+            transition: opacity 0.5s ease-out;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
         }
 
-        .crease-diagonal-left {
-            width: 100%;
-            height: 2px;
-            top: 0;
-            left: 0;
-            transform-origin: top left;
-            transform: rotate(35deg);
-        }
-
-        .crease-diagonal-right {
-            width: 100%;
-            height: 2px;
-            top: 0;
-            right: 0;
-            transform-origin: top right;
-            transform: rotate(-35deg);
-        }
-
-        /* UI元素 */
+        /* UI */
         .step-indicator {
             position: fixed;
             top: 40px;
@@ -261,13 +238,10 @@
             text-align: center;
             opacity: 0.9;
             pointer-events: none;
-            transition: opacity 0.5s;
-            text-shadow: 0 2px 4px rgba(255,255,255,0.8);
-            max-width: 80%;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
         }
 
-        /* 完成状态 */
-        .completed .hint {
+        body.completed .hint {
             font-size: 24px;
             color: #4CAF50;
             font-weight: 600;
@@ -276,35 +250,35 @@
 </head>
 <body>
     <div class="step-indicator">
-        <span id="step">0</span> / 8 步
+        <span id="step">0</span> / 7 步
     </div>
     <div class="hint" id="hint">点击白纸开始折叠纸飞机</div>
 
     <div class="scene" id="scene">
         <div class="plane" id="plane">
             <div class="plane-surface">
-                <div class="paper-wrapper" id="paperWrapper">
-                    <div class="paper" id="paper">
-                        <div class="center-crease"></div>
+                <div class="paper-container" id="paperContainer">
+                    <!-- 基础纸张 -->
+                    <div class="base-paper" id="basePaper">
+                        <div class="center-line" id="centerLine"></div>
+                    </div>
 
-                        <!-- 第一层：左右半部分（用于最后的中线对折） -->
-                        <div class="half-left" id="halfLeft">
-                            <!-- 左上角折叠 -->
-                            <div class="corner-left" id="cornerLeft">
-                                <div class="crease crease-diagonal-left" id="creaseLeft"></div>
-                            </div>
-                            <!-- 左翼 -->
-                            <div class="wing-left" id="wingLeft"></div>
+                    <!-- 纸飞机模型 -->
+                    <div class="airplane" id="airplane">
+                        <!-- 左半部分 -->
+                        <div class="left-half" id="leftHalf">
+                            <div class="top-left-fold" id="topLeftFold"></div>
+                            <div class="left-wing" id="leftWing"></div>
                         </div>
 
-                        <div class="half-right" id="halfRight">
-                            <!-- 右上角折叠 -->
-                            <div class="corner-right" id="cornerRight">
-                                <div class="crease crease-diagonal-right" id="creaseRight"></div>
-                            </div>
-                            <!-- 右翼 -->
-                            <div class="wing-right" id="wingRight"></div>
+                        <!-- 右半部分 -->
+                        <div class="right-half" id="rightHalf">
+                            <div class="top-right-fold" id="topRightFold"></div>
+                            <div class="right-wing" id="rightWing"></div>
                         </div>
+
+                        <!-- 机身中心 -->
+                        <div class="fuselage" id="fuselage"></div>
                     </div>
                 </div>
             </div>
@@ -313,64 +287,54 @@
 
     <script>
         let currentStep = 0;
-        const totalSteps = 8;
+        const totalSteps = 7;
         let isAnimating = false;
 
-        const elements = {
+        const el = {
             scene: document.getElementById('scene'),
             plane: document.getElementById('plane'),
-            wrapper: document.getElementById('paperWrapper'),
-            paper: document.getElementById('paper'),
+            container: document.getElementById('paperContainer'),
+            basePaper: document.getElementById('basePaper'),
+            airplane: document.getElementById('airplane'),
+            centerLine: document.getElementById('centerLine'),
+            leftHalf: document.getElementById('leftHalf'),
+            rightHalf: document.getElementById('rightHalf'),
+            topLeftFold: document.getElementById('topLeftFold'),
+            topRightFold: document.getElementById('topRightFold'),
+            leftWing: document.getElementById('leftWing'),
+            rightWing: document.getElementById('rightWing'),
+            fuselage: document.getElementById('fuselage'),
             hint: document.getElementById('hint'),
-            step: document.getElementById('step'),
-            centerCrease: document.querySelector('.center-crease'),
-            halfLeft: document.getElementById('halfLeft'),
-            halfRight: document.getElementById('halfRight'),
-            cornerLeft: document.getElementById('cornerLeft'),
-            cornerRight: document.getElementById('cornerRight'),
-            wingLeft: document.getElementById('wingLeft'),
-            wingRight: document.getElementById('wingRight'),
-            creaseLeft: document.getElementById('creaseLeft'),
-            creaseRight: document.getElementById('creaseRight')
+            stepDisplay: document.getElementById('step')
         };
 
-        // 每步的提示文字
         const hints = [
             '点击白纸开始折叠纸飞机',
-            '建立中线折痕',
+            '对折建立中线',
             '左上角向中线折叠',
             '右上角向中线折叠',
             '左侧再次向中线折叠',
             '右侧再次向中线折叠',
             '整体沿中线对折',
-            '展开左侧机翼',
-            '展开右侧机翼 - 完成！'
+            '展开机翼完成纸飞机！'
         ];
 
-        // 更新UI
         function updateUI() {
-            elements.hint.textContent = currentStep < totalSteps ? hints[currentStep + 1] : '纸飞机折叠完成！✈️';
-            elements.step.textContent = currentStep;
-
+            el.hint.textContent = currentStep < totalSteps ? hints[currentStep + 1] : '纸飞机折叠完成！✈️';
+            el.stepDisplay.textContent = currentStep;
             if (currentStep === totalSteps) {
                 document.body.classList.add('completed');
             }
         }
 
-        // 视角靠近效果 - 每步递进
         function zoomCamera() {
-            // perspective: 1200 -> 400
-            // translateZ: -1200 -> -200
-            // rotateX: 65 -> 35
             const progress = currentStep / totalSteps;
+            const perspective = 1200 - (700 * progress);
+            const translateZ = -1200 + (900 * progress);
+            const rotateX = 65 - (25 * progress);
 
-            const perspective = 1200 - (800 * progress);
-            const translateZ = -1200 + (1000 * progress);
-            const rotateX = 65 - (30 * progress);
-            const scale = 1 + (0.3 * progress); // 纸张逐渐变大
-
-            elements.scene.style.perspective = `${perspective}px`;
-            elements.plane.style.transform = `
+            el.scene.style.perspective = `${perspective}px`;
+            el.plane.style.transform = `
                 translateX(-50%)
                 translateY(-50%)
                 translateZ(${translateZ}px)
@@ -378,99 +342,83 @@
             `;
         }
 
-        // 执行折叠动画
         function fold() {
             if (currentStep >= totalSteps || isAnimating) return;
 
             isAnimating = true;
             currentStep++;
-
-            // 视角靠近
             zoomCamera();
 
-            // 根据步骤执行不同的折叠
             switch(currentStep) {
-                case 1: // 建立中线（对折后展开）
-                    elements.centerCrease.style.opacity = '1';
-                    // 模拟快速对折再展开
-                    elements.halfLeft.style.transform = 'rotateY(90deg)';
+                case 1: // 对折建立中线
+                    el.centerLine.style.opacity = '1';
+                    el.basePaper.style.transform = 'scaleX(0.5)';
                     setTimeout(() => {
-                        elements.halfLeft.style.transform = 'rotateY(0deg)';
-                    }, 300);
+                        el.basePaper.style.transform = 'scaleX(1)';
+                    }, 400);
                     break;
 
                 case 2: // 左上角折向中线
-                    elements.creaseLeft.style.opacity = '1';
-                    elements.cornerLeft.style.transform = 'rotateZ(-25deg) rotateY(90deg) translateX(10px)';
+                    el.basePaper.style.opacity = '0.3';
+                    el.airplane.classList.add('visible');
+                    el.topLeftFold.style.transform = 'rotateZ(90deg) translateY(-50%)';
                     break;
 
                 case 3: // 右上角折向中线
-                    elements.creaseRight.style.opacity = '1';
-                    elements.cornerRight.style.transform = 'rotateZ(25deg) rotateY(-90deg) translateX(-10px)';
+                    el.topRightFold.style.transform = 'rotateZ(-90deg) translateY(-50%)';
                     break;
 
-                case 4: // 左侧二次折叠（形成尖机头）
-                    elements.halfLeft.style.transform = 'rotateY(45deg) translateZ(8px)';
-                    elements.cornerLeft.style.transform = 'rotateZ(-25deg) rotateY(135deg) translateX(15px) translateZ(5px)';
+                case 4: // 左侧再次折向中线
+                    el.basePaper.style.opacity = '0';
+                    el.leftHalf.style.transform = 'rotateY(0deg)';
+                    el.topLeftFold.style.transform = 'rotateZ(90deg) rotateY(180deg) translateY(-50%)';
                     break;
 
-                case 5: // 右侧二次折叠
-                    elements.halfRight.style.transform = 'rotateY(-45deg) translateZ(8px)';
-                    elements.cornerRight.style.transform = 'rotateZ(25deg) rotateY(-135deg) translateX(-15px) translateZ(5px)';
+                case 5: // 右侧再次折向中线
+                    el.rightHalf.style.transform = 'rotateY(0deg)';
+                    el.topRightFold.style.transform = 'rotateZ(-90deg) rotateY(-180deg) translateY(-50%)';
                     break;
 
                 case 6: // 整体沿中线对折
-                    elements.wrapper.style.transform = `
+                    el.leftHalf.style.transform = 'rotateY(85deg)';
+                    el.rightHalf.style.transform = 'rotateY(-85deg)';
+                    el.fuselage.style.opacity = '1';
+                    el.container.style.transform = `
                         translateX(-50%)
                         translateY(-50%)
                         rotateX(-65deg)
-                        rotateY(5deg)
                         scale(0.9)
                     `;
-                    elements.halfLeft.style.transform = 'rotateY(80deg) translateZ(15px)';
-                    elements.halfRight.style.transform = 'rotateY(-80deg) translateZ(15px)';
-                    elements.cornerLeft.style.transform = 'rotateZ(-25deg) rotateY(170deg) translateX(20px) translateZ(10px)';
-                    elements.cornerRight.style.transform = 'rotateZ(25deg) rotateY(-170deg) translateX(-20px) translateZ(10px)';
                     break;
 
-                case 7: // 展开左翼
-                    elements.wingLeft.style.transform = 'rotateX(-35deg) translateY(20px) translateZ(5px)';
-                    elements.halfLeft.style.transform = 'rotateY(70deg) translateZ(15px)';
-                    break;
+                case 7: // 展开机翼
+                    el.leftWing.style.transform = 'rotateY(-20deg) translateZ(5px)';
+                    el.rightWing.style.transform = 'rotateY(20deg) translateZ(5px)';
+                    el.leftHalf.style.transform = 'rotateY(0deg)';
+                    el.rightHalf.style.transform = 'rotateY(0deg)';
 
-                case 8: // 展开右翼 - 完成纸飞机
-                    elements.wingRight.style.transform = 'rotateX(-35deg) translateY(20px) translateZ(5px)';
-                    elements.halfRight.style.transform = 'rotateY(-70deg) translateZ(15px)';
-
-                    // 最终姿态调整
                     setTimeout(() => {
-                        elements.wrapper.style.transform = `
+                        el.container.style.transform = `
                             translateX(-50%)
                             translateY(-50%)
                             rotateX(-50deg)
-                            rotateY(0deg)
-                            rotateZ(-5deg)
+                            rotateY(-10deg)
+                            rotateZ(-8deg)
                             scale(0.85)
                         `;
-                    }, 400);
+                    }, 300);
                     break;
             }
 
             updateUI();
-
-            // 动画完成后允许下次点击
-            setTimeout(() => {
-                isAnimating = false;
-            }, 1200);
+            setTimeout(() => { isAnimating = false; }, 1000);
         }
 
-        // 点击事件
-        elements.wrapper.addEventListener('click', (e) => {
+        el.container.addEventListener('click', (e) => {
             e.stopPropagation();
             fold();
         });
 
-        // 初始化
         updateUI();
     </script>
 </body>
