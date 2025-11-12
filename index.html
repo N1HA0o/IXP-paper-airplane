@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paper Airplane - Origami Folding</title>
+    <title>Paper Airplane Journey</title>
     <style>
         * {
             margin: 0;
@@ -15,584 +15,965 @@
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(to bottom, #f0f0f0 0%, #e8e8e8 100%);
-            font-family: 'Courier New', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+            font-family: 'Arial', sans-serif;
         }
 
-        /* Hand-drawn paper texture */
-        @keyframes paperTexture {
-            0%, 100% { opacity: 0.08; }
-            50% { opacity: 0.12; }
-        }
-
-        .paper-texture {
-            position: absolute;
+        .scene {
             width: 100%;
             height: 100%;
-            background-image:
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
-            animation: paperTexture 3s ease-in-out infinite;
-            pointer-events: none;
-        }
-
-        /* Paper container - 300x300px square */
-        .paper-container {
             position: relative;
-            width: 300px;
-            height: 300px;
-            transform-style: preserve-3d;
             perspective: 1200px;
-            cursor: pointer;
+            perspective-origin: 50% 50%;
+            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .paper-container.animating {
+        .world {
+            position: absolute;
+            width: 8000px;
+            height: 5000px;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+            transform:
+                translateX(-50%)
+                translateY(-50%)
+                translateZ(-1200px)
+                rotateX(65deg);
+            transition: all 3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ground {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(173, 216, 230, 1) 0%,
+                rgba(173, 216, 230, 0.95) 10%,
+                rgba(173, 216, 230, 0.8) 25%,
+                rgba(173, 216, 230, 0.5) 45%,
+                rgba(173, 216, 230, 0.25) 65%,
+                rgba(173, 216, 230, 0) 100%
+            );
+            position: relative;
+        }
+
+        /* Paper container - 3D but no thickness */
+        .paper-container {
+            position: absolute;
+            width: 300px;
+            height: 400px;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+            transform:
+                translateX(-50%)
+                translateY(-50%)
+                rotateX(-65deg);
+            cursor: pointer;
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .paper-container.folding {
             cursor: default;
         }
 
-        /* Base paper */
+        /* Base paper - 3D, no thickness */
         .paper {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: #ffffff;
             transform-style: preserve-3d;
-            box-shadow:
-                0 8px 25px rgba(0, 0, 0, 0.15),
-                inset 0 0 50px rgba(0, 0, 0, 0.03);
-            border: 2.5px solid rgba(0, 0, 0, 0.1);
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Reference lines */
-        .reference-line {
+        /* Left half of paper */
+        .paper-left {
             position: absolute;
-            background: #999999;
+            width: 50%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            transform-style: preserve-3d;
+            transform-origin: right center;
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Right half of paper */
+        .paper-right {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            background: #ffffff;
+            transform-style: preserve-3d;
+            transform-origin: left center;
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Center line indicator */
+        .center-line {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(200, 200, 200, 0) 0px,
+                rgba(200, 200, 200, 0) 5px,
+                rgba(200, 200, 200, 0.6) 5px,
+                rgba(200, 200, 200, 0.6) 10px
+            );
             opacity: 0;
-            transition: opacity 0.8s ease-out;
+            transition: opacity 0.8s ease;
             pointer-events: none;
             z-index: 10;
         }
 
-        .reference-line.visible {
-            opacity: 0.6;
-        }
-
-        /* Vertical center line - Step 1 */
-        .center-line {
-            width: 1px;
-            height: 100%;
-            left: 50%;
-            top: 0;
-            background: repeating-linear-gradient(
-                to bottom,
-                #999999 0px,
-                #999999 5px,
-                transparent 5px,
-                transparent 10px
-            );
-        }
-
-        /* Diagonal fold lines */
-        .fold-line {
-            position: absolute;
-            height: 2px;
-            background: #CCCCCC;
-            opacity: 0;
-            transform-origin: left center;
-            transition: opacity 0.5s ease-out;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .fold-line.visible {
-            opacity: 0.8;
-        }
-
-        /* Top-left corner fold triangle - Step 2 */
-        .top-left-triangle {
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: 0;
-            top: 0;
-            border-left: 150px solid #ffffff;
-            border-top: 100px solid transparent;
-            transform-origin: 150px 100px;
-            transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.2);
-            z-index: 2;
-            opacity: 0;
-        }
-
-        .top-left-triangle.visible {
+        .center-line.visible {
             opacity: 1;
         }
 
-        .top-left-triangle.folded {
-            transform: rotateY(-180deg) translateZ(2px);
+        /* Top left triangle - Step 2 */
+        .top-left-fold {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            left: 0;
+            top: 0;
+            background: #ffffff;
+            transform-style: preserve-3d;
+            transform-origin: 50% 100%;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.2);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
         }
 
-        /* Top-right corner fold triangle - Step 3 */
-        .top-right-triangle {
+        /* Top right triangle - Step 3 */
+        .top-right-fold {
             position: absolute;
-            width: 0;
-            height: 0;
+            width: 50%;
+            height: 50%;
             right: 0;
             top: 0;
-            border-right: 150px solid #ffffff;
-            border-top: 100px solid transparent;
-            transform-origin: -150px 100px;
+            background: #ffffff;
             transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.2);
+            transform-origin: 0% 100%;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+            box-shadow: -3px 3px 12px rgba(0, 0, 0, 0.2);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 2;
-            opacity: 0;
         }
 
-        .top-right-triangle.visible {
-            opacity: 1;
-        }
-
-        .top-right-triangle.folded {
-            transform: rotateY(180deg) translateZ(2px);
-        }
-
-        /* Top cone section - Step 4 */
-        .top-cone {
+        /* Wing left - Step 5 */
+        .wing-left {
             position: absolute;
-            width: 100%;
-            height: 100px;
+            width: 50%;
+            height: 100%;
             left: 0;
             top: 0;
-            background: #f5f5f5;
-            transform-origin: center 100px;
+            background: linear-gradient(to right, #ffffff 0%, #fafafa 100%);
             transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            z-index: 3;
+            transform-origin: right center;
+            box-shadow: -2px 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-        }
-
-        .top-cone.visible {
-            opacity: 1;
-        }
-
-        .top-cone.folded {
-            transform: rotateX(180deg) translateZ(2px);
-        }
-
-        /* Left wing - Step 5 */
-        .left-wing {
-            position: absolute;
-            width: 0;
-            height: 0;
-            left: 100px;
-            bottom: 0;
-            border-left: 50px solid transparent;
-            border-bottom: 50px solid #ffffff;
-            transform-origin: 50px 0;
-            transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 2px -2px 8px rgba(0, 0, 0, 0.15);
             z-index: 1;
-            opacity: 0;
         }
 
-        .left-wing.visible {
+        .wing-left.visible {
             opacity: 1;
         }
 
-        .left-wing.folded {
-            transform: rotateZ(-45deg) rotateX(-45deg) translateZ(5px);
-        }
-
-        /* Right wing - Step 6 */
-        .right-wing {
+        /* Wing right - Step 5 */
+        .wing-right {
             position: absolute;
-            width: 0;
-            height: 0;
-            right: 100px;
-            bottom: 0;
-            border-right: 50px solid transparent;
-            border-bottom: 50px solid #ffffff;
-            transform-origin: -50px 0;
+            width: 50%;
+            height: 100%;
+            right: 0;
+            top: 0;
+            background: linear-gradient(to left, #ffffff 0%, #fafafa 100%);
             transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -2px -2px 8px rgba(0, 0, 0, 0.15);
+            transform-origin: left center;
+            box-shadow: 2px 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
             z-index: 1;
-            opacity: 0;
         }
 
-        .right-wing.visible {
+        .wing-right.visible {
             opacity: 1;
         }
 
-        .right-wing.folded {
-            transform: rotateZ(45deg) rotateX(-45deg) translateZ(5px);
+        /* Choice buttons - Left */
+        .choice-left {
+            position: fixed;
+            left: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 100;
         }
 
-        /* Body center section */
-        .body-center {
+        .choice-left.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .choice-left:hover {
+            transform: translateY(-50%) translateX(-10px);
+        }
+
+        /* Choice buttons - Right */
+        .choice-right {
+            position: fixed;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 100;
+        }
+
+        .choice-right.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .choice-right:hover {
+            transform: translateY(-50%) translateX(10px);
+        }
+
+        /* Arrow */
+        .arrow {
+            width: 60px;
+            height: 60px;
+            color: white;
+            font-size: 48px;
+            font-weight: 300;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            animation: float-arrow 2s ease-in-out infinite;
+        }
+
+        @keyframes float-arrow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-8px); }
+        }
+
+        .choice-right .arrow {
+            animation: float-arrow-right 2s ease-in-out infinite;
+        }
+
+        @keyframes float-arrow-right {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(8px); }
+        }
+
+        /* Choice text */
+        .choice-text {
+            color: white;
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 25px;
+            border-radius: 25px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Pigeons */
+        .pigeons {
             position: absolute;
-            width: 100px;
-            height: 200px;
-            left: 100px;
-            top: 100px;
-            background: linear-gradient(to bottom,
-                #ffffff 0%,
-                #fafafa 50%,
-                #ffffff 100%);
+            left: 45%;
+            top: 30%;
             transform-style: preserve-3d;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: scale(0.2) translateZ(-2000px);
+            transition: all 6s cubic-bezier(0.2, 0, 0.3, 1);
+        }
+
+        .pigeons.visible {
+            opacity: 1;
+            transform: scale(1.5) translateZ(200px);
+        }
+
+        .pigeon {
+            position: absolute;
+            width: 40px;
+            height: 30px;
+            background: white;
+            border-radius: 50% 50% 40% 40%;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            animation: fly 2s ease-in-out infinite;
+        }
+
+        .pigeon::before,
+        .pigeon::after {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            top: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .pigeon::before {
+            left: -30px;
+            transform-origin: right center;
+            animation: wing-left 0.5s ease-in-out infinite;
+        }
+
+        .pigeon::after {
+            right: -30px;
+            transform-origin: left center;
+            animation: wing-right 0.5s ease-in-out infinite;
+        }
+
+        @keyframes fly {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes wing-left {
+            0%, 100% { transform: rotateZ(-10deg); }
+            50% { transform: rotateZ(-30deg); }
+        }
+
+        @keyframes wing-right {
+            0%, 100% { transform: rotateZ(10deg); }
+            50% { transform: rotateZ(30deg); }
+        }
+
+        /* Hot air balloon */
+        .hot-air-balloon {
+            position: absolute;
+            right: 40%;
+            bottom: -500px;
+            transform-style: preserve-3d;
+            opacity: 0;
+            transition: all 5s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+
+        .hot-air-balloon.visible {
+            opacity: 1;
+            bottom: 30%;
+        }
+
+        /* Balloon sphere */
+        .balloon-sphere {
+            position: relative;
+            width: 200px;
+            height: 240px;
+            transform-style: preserve-3d;
+            animation: float-balloon 4s ease-in-out infinite;
+        }
+
+        @keyframes float-balloon {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-25px) rotateY(5deg); }
+        }
+
+        /* Sphere layers */
+        .balloon-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+            transform-style: preserve-3d;
+        }
+
+        .balloon-layer-1 {
+            background: linear-gradient(135deg,
+                #dc143c 0%,
+                #ff4757 25%,
+                #ff6b6b 50%,
+                #ee5a6f 75%,
+                #c91f37 100%);
+            transform: translateZ(30px);
             box-shadow:
-                inset 0 2px 5px rgba(0, 0, 0, 0.05),
-                0 5px 15px rgba(0, 0, 0, 0.1);
-            z-index: 0;
+                inset -10px -20px 30px rgba(0, 0, 0, 0.2),
+                inset 10px 10px 20px rgba(255, 255, 255, 0.3),
+                0 20px 50px rgba(0, 0, 0, 0.3);
         }
 
-        /* Step indicator */
-        .step-indicator {
+        .balloon-layer-2 {
+            background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.3) 0%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.1) 100%);
+            transform: translateZ(35px);
+        }
+
+        /* Balloon stripes */
+        .balloon-stripe {
+            position: absolute;
+            width: 100%;
+            height: 15%;
+            left: 0;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            transform-style: preserve-3d;
+        }
+
+        .balloon-stripe:nth-child(1) { top: 20%; }
+        .balloon-stripe:nth-child(2) { top: 40%; }
+        .balloon-stripe:nth-child(3) { top: 60%; }
+
+        /* Ropes */
+        .balloon-ropes {
+            position: absolute;
+            width: 100%;
+            height: 80px;
+            top: 100%;
+            left: 0;
+            transform-style: preserve-3d;
+        }
+
+        .rope {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                #654321 0%,
+                #8B4513 50%,
+                #654321 100%);
+            transform-origin: top center;
+            box-shadow: 1px 0 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .rope:nth-child(1) {
+            left: 30%;
+            transform: rotateZ(-3deg);
+        }
+
+        .rope:nth-child(2) {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .rope:nth-child(3) {
+            right: 30%;
+            transform: rotateZ(3deg);
+        }
+
+        /* Basket */
+        .balloon-basket {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            left: 50%;
+            top: 100%;
+            transform: translateX(-50%);
+            margin-top: 80px;
+            background: linear-gradient(135deg,
+                #8B4513 0%,
+                #A0522D 50%,
+                #654321 100%);
+            border-radius: 0 0 12px 12px;
+            box-shadow:
+                inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+                inset -2px -2px 5px rgba(0, 0, 0, 0.3),
+                0 10px 25px rgba(0, 0, 0, 0.4);
+            transform-style: preserve-3d;
+        }
+
+        /* Basket weave */
+        .basket-weave {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 0, 0, 0.2);
+            left: 0;
+        }
+
+        .basket-weave:nth-child(1) { top: 20%; }
+        .basket-weave:nth-child(2) { top: 40%; }
+        .basket-weave:nth-child(3) { top: 60%; }
+        .basket-weave:nth-child(4) { top: 80%; }
+
+        /* Basket rim */
+        .basket-rim {
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            top: -4px;
+            background: #654321;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Hint text */
+        .hint {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-align: center;
+            opacity: 0.9;
+            pointer-events: none;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            transition: opacity 0.5s;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 15px 35px;
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
+        }
+
+        /* Step counter */
+        .step-counter {
             position: fixed;
             top: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 30px;
-            border-radius: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-            letter-spacing: 1px;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-
-        .step-indicator .step-number {
-            color: #2196F3;
-            font-size: 24px;
-        }
-
-        /* Instruction text */
-        .instruction {
-            position: fixed;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.75);
             color: white;
-            padding: 15px 35px;
-            border-radius: 30px;
-            font-size: 16px;
-            letter-spacing: 1px;
-            backdrop-filter: blur(10px);
-            text-align: center;
-            max-width: 80%;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            z-index: 100;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Crease lines for visual feedback */
-        .crease {
-            position: absolute;
-            height: 1px;
-            background: #CCCCCC;
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 30px;
+            border-radius: 25px;
+            backdrop-filter: blur(8px);
             opacity: 0;
-            transition: opacity 0.5s ease-out;
-            z-index: 4;
+            transition: opacity 0.5s;
+            z-index: 50;
         }
 
-        .crease.visible {
-            opacity: 0.5;
+        .step-counter.visible {
+            opacity: 0.9;
         }
 
-        /* Horizontal crease at y=100px for step 4 */
-        .horizontal-crease {
-            width: 100%;
-            top: 100px;
-            left: 0;
-        }
-
-        /* Shadow overlay for depth */
-        .shadow-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0,0,0,0.05) 100%);
+        /* Scene description */
+        .scene-description {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-align: center;
+            opacity: 0;
             pointer-events: none;
-            z-index: 20;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transition: opacity 1s ease-out;
+            z-index: 50;
+            max-width: 80%;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px 45px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .scene-description.visible {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="step-indicator" id="stepIndicator">
-        <span class="step-number">Step 1</span> / 7 - Click to fold
+    <div class="step-counter" id="stepCounter">Step 1 / 5</div>
+    <div class="hint" id="hint">Click the paper to start folding</div>
+    <div class="scene-description" id="sceneDesc"></div>
+
+    <!-- Left choice -->
+    <div class="choice-left" id="choiceLeft">
+        <div class="arrow">←</div>
+        <div class="choice-text">Fly Left</div>
     </div>
 
-    <div class="instruction" id="instruction">
-        Click the paper to create the center reference line
+    <!-- Right choice -->
+    <div class="choice-right" id="choiceRight">
+        <div class="arrow">→</div>
+        <div class="choice-text">Fly Right</div>
     </div>
 
-    <div class="paper-container" id="paperContainer">
-        <div class="paper" id="paper">
-            <div class="paper-texture"></div>
+    <div class="scene" id="scene">
+        <div class="world" id="world">
+            <div class="ground">
+                <!-- Paper and airplane -->
+                <div class="paper-container" id="paperContainer">
+                    <div class="paper" id="paper">
+                        <!-- Center line -->
+                        <div class="center-line" id="centerLine"></div>
 
-            <!-- Reference lines -->
-            <div class="reference-line center-line" id="centerLine"></div>
+                        <!-- Left and right halves -->
+                        <div class="paper-left" id="paperLeft"></div>
+                        <div class="paper-right" id="paperRight"></div>
 
-            <!-- Crease lines -->
-            <div class="crease horizontal-crease" id="horizontalCrease"></div>
+                        <!-- Top folds -->
+                        <div class="top-left-fold" id="topLeftFold"></div>
+                        <div class="top-right-fold" id="topRightFold"></div>
 
-            <!-- Fold sections -->
-            <div class="top-left-triangle" id="topLeftTriangle"></div>
-            <div class="top-right-triangle" id="topRightTriangle"></div>
-            <div class="top-cone" id="topCone"></div>
-            <div class="body-center" id="bodyCenter"></div>
-            <div class="left-wing" id="leftWing"></div>
-            <div class="right-wing" id="rightWing"></div>
+                        <!-- Wings -->
+                        <div class="wing-left" id="wingLeft"></div>
+                        <div class="wing-right" id="wingRight"></div>
+                    </div>
+                </div>
 
-            <div class="shadow-overlay"></div>
+                <!-- Pigeons -->
+                <div class="pigeons" id="pigeons"></div>
+
+                <!-- Hot air balloon -->
+                <div class="hot-air-balloon" id="balloon">
+                    <div class="balloon-sphere">
+                        <div class="balloon-layer balloon-layer-1">
+                            <div class="balloon-stripe"></div>
+                            <div class="balloon-stripe"></div>
+                            <div class="balloon-stripe"></div>
+                        </div>
+                        <div class="balloon-layer balloon-layer-2"></div>
+                    </div>
+                    <div class="balloon-ropes">
+                        <div class="rope"></div>
+                        <div class="rope"></div>
+                        <div class="rope"></div>
+                    </div>
+                    <div class="balloon-basket">
+                        <div class="basket-rim"></div>
+                        <div class="basket-weave"></div>
+                        <div class="basket-weave"></div>
+                        <div class="basket-weave"></div>
+                        <div class="basket-weave"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Game state
         let currentStep = 0;
         let isAnimating = false;
+        let gameState = 'folding'; // folding, flying
 
-        // DOM elements
         const el = {
+            scene: document.getElementById('scene'),
+            world: document.getElementById('world'),
             container: document.getElementById('paperContainer'),
             paper: document.getElementById('paper'),
-            stepIndicator: document.getElementById('stepIndicator'),
-            instruction: document.getElementById('instruction'),
+            paperLeft: document.getElementById('paperLeft'),
+            paperRight: document.getElementById('paperRight'),
             centerLine: document.getElementById('centerLine'),
-            horizontalCrease: document.getElementById('horizontalCrease'),
-            topLeftTriangle: document.getElementById('topLeftTriangle'),
-            topRightTriangle: document.getElementById('topRightTriangle'),
-            topCone: document.getElementById('topCone'),
-            bodyCenter: document.getElementById('bodyCenter'),
-            leftWing: document.getElementById('leftWing'),
-            rightWing: document.getElementById('rightWing')
+            topLeftFold: document.getElementById('topLeftFold'),
+            topRightFold: document.getElementById('topRightFold'),
+            wingLeft: document.getElementById('wingLeft'),
+            wingRight: document.getElementById('wingRight'),
+            hint: document.getElementById('hint'),
+            stepCounter: document.getElementById('stepCounter'),
+            choiceLeft: document.getElementById('choiceLeft'),
+            choiceRight: document.getElementById('choiceRight'),
+            pigeons: document.getElementById('pigeons'),
+            balloon: document.getElementById('balloon'),
+            sceneDesc: document.getElementById('sceneDesc')
         };
 
-        // Step instructions
-        const instructions = [
-            "Click the paper to create the center reference line",
-            "Click to fold the top-left corner to the center",
-            "Click to fold the top-right corner to the center",
-            "Click to fold the top cone section downward",
-            "Click to fold the left wing upward",
-            "Click to fold the right wing upward",
-            "Click for final adjustments",
-            "Paper airplane complete! Click to restart"
+        // Step hints
+        const stepHints = [
+            "Click to create center line",
+            "Click to fold top-left corner",
+            "Click to fold top-right corner",
+            "Click to fold along center",
+            "Click to spread wings",
+            "Choose your flight direction"
         ];
 
+        // Create pigeons
+        function createPigeons() {
+            const positions = [
+                { x: 0, y: 0, delay: 0 },
+                { x: 90, y: -40, delay: 0.2 },
+                { x: -80, y: 25, delay: 0.1 },
+                { x: 170, y: 15, delay: 0.3 },
+                { x: -160, y: -25, delay: 0.15 },
+                { x: 70, y: 70, delay: 0.25 },
+                { x: -60, y: -70, delay: 0.05 },
+                { x: 130, y: -60, delay: 0.35 }
+            ];
+
+            positions.forEach(pos => {
+                const pigeon = document.createElement('div');
+                pigeon.className = 'pigeon';
+                pigeon.style.left = pos.x + 'px';
+                pigeon.style.top = pos.y + 'px';
+                pigeon.style.animationDelay = pos.delay + 's';
+                el.pigeons.appendChild(pigeon);
+            });
+        }
+
+        // Update UI
+        function updateUI() {
+            if (currentStep < 5) {
+                el.stepCounter.textContent = `Step ${currentStep + 1} / 5`;
+                el.stepCounter.classList.add('visible');
+                el.hint.textContent = stepHints[currentStep];
+            } else {
+                el.stepCounter.classList.remove('visible');
+                el.hint.textContent = stepHints[5];
+            }
+        }
+
         // Folding steps
-        const foldingSteps = [
-            // Step 1: Show center reference line
+        const foldSteps = [
+            // Step 1: Show center line
             function step1() {
-                setAnimating(true);
+                isAnimating = true;
+                el.container.classList.add('folding');
 
-                // Paper spreads slightly then returns
-                el.paper.style.transform = 'scaleX(1.05)';
+                // Paper halves slightly fold inward then return
+                el.paperLeft.style.transform = 'rotateY(15deg)';
+                el.paperRight.style.transform = 'rotateY(-15deg)';
 
                 setTimeout(() => {
-                    el.paper.style.transform = 'scaleX(1)';
+                    el.paperLeft.style.transform = 'rotateY(0deg)';
+                    el.paperRight.style.transform = 'rotateY(0deg)';
                     el.centerLine.classList.add('visible');
-                }, 400);
+                }, 600);
 
                 setTimeout(() => {
-                    setAnimating(false);
-                    nextStep();
-                }, 800);
+                    isAnimating = false;
+                    el.container.classList.remove('folding');
+                    currentStep++;
+                    updateUI();
+                }, 1200);
             },
 
             // Step 2: Fold top-left corner
             function step2() {
-                setAnimating(true);
+                isAnimating = true;
+                el.container.classList.add('folding');
 
-                // Show fold line from (0,0) to (150,100)
-                const foldLine = document.createElement('div');
-                foldLine.className = 'fold-line visible';
-                foldLine.style.width = '180px';
-                foldLine.style.left = '0';
-                foldLine.style.top = '50px';
-                foldLine.style.transform = 'rotate(33.69deg)';
-                el.paper.appendChild(foldLine);
+                // Fold top-left triangle down toward center
+                el.topLeftFold.style.transform = 'rotateX(180deg)';
 
                 setTimeout(() => {
-                    el.topLeftTriangle.classList.add('visible');
-                }, 300);
-
-                setTimeout(() => {
-                    el.topLeftTriangle.classList.add('folded');
-                }, 500);
-
-                setTimeout(() => {
-                    setAnimating(false);
-                    nextStep();
-                }, 1300);
+                    isAnimating = false;
+                    el.container.classList.remove('folding');
+                    currentStep++;
+                    updateUI();
+                }, 1200);
             },
 
             // Step 3: Fold top-right corner
             function step3() {
-                setAnimating(true);
+                isAnimating = true;
+                el.container.classList.add('folding');
 
-                // Show fold line from (300,0) to (150,100)
-                const foldLine = document.createElement('div');
-                foldLine.className = 'fold-line visible';
-                foldLine.style.width = '180px';
-                foldLine.style.right = '0';
-                foldLine.style.top = '50px';
-                foldLine.style.transform = 'rotate(-33.69deg)';
-                foldLine.style.transformOrigin = 'right center';
-                el.paper.appendChild(foldLine);
+                // Fold top-right triangle down toward center
+                el.topRightFold.style.transform = 'rotateX(180deg)';
 
                 setTimeout(() => {
-                    el.topRightTriangle.classList.add('visible');
-                }, 300);
-
-                setTimeout(() => {
-                    el.topRightTriangle.classList.add('folded');
-                }, 500);
-
-                setTimeout(() => {
-                    setAnimating(false);
-                    nextStep();
-                }, 1300);
+                    isAnimating = false;
+                    el.container.classList.remove('folding');
+                    currentStep++;
+                    updateUI();
+                }, 1200);
             },
 
-            // Step 4: Fold top cone downward
+            // Step 4: Fold along center line
             function step4() {
-                setAnimating(true);
+                isAnimating = true;
+                el.container.classList.add('folding');
 
-                // Show horizontal crease line
-                el.horizontalCrease.classList.add('visible');
+                // Entire airplane folds along center
+                el.paperLeft.style.transform = 'rotateY(-90deg)';
+                el.paperRight.style.transform = 'rotateY(0deg)';
+                el.topLeftFold.style.transform = 'rotateX(180deg) rotateY(-90deg)';
 
+                // Hide center line
+                el.centerLine.style.opacity = '0';
+
+                // Rotate container to show side view
                 setTimeout(() => {
-                    // Hide triangles, show cone
-                    el.topLeftTriangle.style.opacity = '0';
-                    el.topRightTriangle.style.opacity = '0';
-                    el.topCone.classList.add('visible');
+                    el.container.style.transform = `
+                        translateX(-50%)
+                        translateY(-50%)
+                        rotateX(-65deg)
+                        rotateY(90deg)
+                    `;
                 }, 300);
 
                 setTimeout(() => {
-                    // Flip cone downward
-                    el.topCone.classList.add('folded');
-                }, 500);
-
-                setTimeout(() => {
-                    setAnimating(false);
-                    nextStep();
-                }, 1300);
+                    isAnimating = false;
+                    el.container.classList.remove('folding');
+                    currentStep++;
+                    updateUI();
+                }, 1200);
             },
 
-            // Step 5: Fold left wing
+            // Step 5: Spread wings
             function step5() {
-                setAnimating(true);
+                isAnimating = true;
+                el.container.classList.add('folding');
+
+                // Hide paper halves, show wings
+                el.paperLeft.style.opacity = '0';
+                el.paperRight.style.opacity = '0';
+                el.topLeftFold.style.opacity = '0';
+                el.topRightFold.style.opacity = '0';
 
                 setTimeout(() => {
-                    el.leftWing.classList.add('visible');
+                    el.wingLeft.classList.add('visible');
+                    el.wingRight.classList.add('visible');
+
+                    // Spread wings outward
+                    el.wingLeft.style.transform = 'rotateZ(-25deg)';
+                    el.wingRight.style.transform = 'rotateZ(25deg)';
                 }, 300);
 
+                // Zoom in camera
                 setTimeout(() => {
-                    el.leftWing.classList.add('folded');
-                }, 500);
-
-                setTimeout(() => {
-                    setAnimating(false);
-                    nextStep();
-                }, 1300);
-            },
-
-            // Step 6: Fold right wing
-            function step6() {
-                setAnimating(true);
+                    el.scene.style.perspective = '700px';
+                    el.world.style.transform = `
+                        translateX(-50%)
+                        translateY(-50%)
+                        translateZ(-500px)
+                        rotateX(55deg)
+                    `;
+                }, 600);
 
                 setTimeout(() => {
-                    el.rightWing.classList.add('visible');
-                }, 300);
+                    isAnimating = false;
+                    el.container.classList.remove('folding');
+                    currentStep++;
+                    updateUI();
 
-                setTimeout(() => {
-                    el.rightWing.classList.add('folded');
-                }, 500);
-
-                setTimeout(() => {
-                    setAnimating(false);
-                    nextStep();
-                }, 1300);
-            },
-
-            // Step 7: Final adjustments
-            function step7() {
-                setAnimating(true);
-
-                // Slight wing tip adjustment
-                el.leftWing.style.transform = 'rotateZ(-45deg) rotateX(-40deg) translateZ(5px)';
-                el.rightWing.style.transform = 'rotateZ(45deg) rotateX(-40deg) translateZ(5px)';
-
-                // Body arc
-                el.bodyCenter.style.transform = 'scaleY(0.98)';
-
-                // Rotate entire airplane to show 3D form
-                setTimeout(() => {
-                    el.container.style.transform = 'rotateX(-15deg) rotateY(10deg)';
-                }, 400);
-
-                setTimeout(() => {
-                    setAnimating(false);
-                    nextStep();
-                }, 1300);
+                    // Show flight choices
+                    gameState = 'flying';
+                    el.choiceLeft.classList.add('visible');
+                    el.choiceRight.classList.add('visible');
+                }, 1800);
             }
         ];
 
-        // Helper functions
-        function setAnimating(state) {
-            isAnimating = state;
-            if (state) {
-                el.container.classList.add('animating');
-            } else {
-                el.container.classList.remove('animating');
-            }
-        }
-
-        function updateUI() {
-            if (currentStep <= 7) {
-                el.stepIndicator.innerHTML = `<span class="step-number">Step ${currentStep + 1}</span> / 7 - ${currentStep === 7 ? 'Complete!' : 'Click to fold'}`;
-                el.instruction.textContent = instructions[currentStep];
-            }
-        }
-
-        function nextStep() {
-            currentStep++;
-            updateUI();
-        }
-
+        // Handle click
         function handleClick() {
-            // Prevent clicks during animation
-            if (isAnimating) return;
+            if (isAnimating || gameState !== 'folding') return;
 
-            // Execute current step
-            if (currentStep < foldingSteps.length) {
-                foldingSteps[currentStep]();
-            } else if (currentStep === 7) {
-                // Restart
-                location.reload();
+            if (currentStep < foldSteps.length) {
+                foldSteps[currentStep]();
             }
+        }
+
+        // Fly left - Meet pigeons
+        function flyLeft() {
+            if (gameState !== 'flying') return;
+            gameState = 'done';
+
+            el.choiceLeft.classList.remove('visible');
+            el.choiceRight.classList.remove('visible');
+            el.hint.style.opacity = '0';
+
+            // Airplane turns left
+            el.container.style.transform = `
+                translateX(-50%)
+                translateY(-50%)
+                rotateX(-50deg)
+                rotateY(0deg)
+                scale(1.2)
+            `;
+
+            // Camera follows
+            setTimeout(() => {
+                el.scene.style.perspective = '900px';
+                el.world.style.transform = `
+                    translateX(-50%)
+                    translateY(-50%)
+                    translateZ(-400px)
+                    rotateX(50deg)
+                    rotateY(-20deg)
+                `;
+            }, 500);
+
+            // Pigeons approach
+            setTimeout(() => {
+                el.pigeons.classList.add('visible');
+                el.sceneDesc.textContent = 'A flock of pigeons approaches from afar';
+                el.sceneDesc.classList.add('visible');
+            }, 1500);
+
+            setTimeout(() => {
+                el.sceneDesc.style.opacity = '0';
+            }, 7000);
+        }
+
+        // Fly right - Meet hot air balloon
+        function flyRight() {
+            if (gameState !== 'flying') return;
+            gameState = 'done';
+
+            el.choiceLeft.classList.remove('visible');
+            el.choiceRight.classList.remove('visible');
+            el.hint.style.opacity = '0';
+
+            // Airplane turns right
+            el.container.style.transform = `
+                translateX(-50%)
+                translateY(-50%)
+                rotateX(-50deg)
+                rotateY(180deg)
+                scale(1.2)
+            `;
+
+            // Camera follows
+            setTimeout(() => {
+                el.scene.style.perspective = '900px';
+                el.world.style.transform = `
+                    translateX(-50%)
+                    translateY(-50%)
+                    translateZ(-400px)
+                    rotateX(50deg)
+                    rotateY(20deg)
+                `;
+            }, 500);
+
+            // Balloon rises
+            setTimeout(() => {
+                el.balloon.classList.add('visible');
+                el.sceneDesc.textContent = 'A red hot air balloon rises from below';
+                el.sceneDesc.classList.add('visible');
+            }, 1500);
+
+            setTimeout(() => {
+                el.sceneDesc.style.opacity = '0';
+            }, 7000);
         }
 
         // Event listeners
         el.container.addEventListener('click', handleClick);
+        el.choiceLeft.addEventListener('click', flyLeft);
+        el.choiceRight.addEventListener('click', flyRight);
 
         // Initialize
+        createPigeons();
         updateUI();
     </script>
 </body>
